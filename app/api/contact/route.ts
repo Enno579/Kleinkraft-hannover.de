@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
-const TO_EMAIL = 'ennoscharf@gmx.net';
+const TO_EMAIL = 'Ennosch93@gmail.com';
 const SUBJECT = 'Neue Beratungsanfrage über kleinkraft-hannover.de';
 
 const WOHNSITUATION_LABELS: Record<string, string> = {
