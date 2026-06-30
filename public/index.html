@@ -192,8 +192,29 @@
               <p class="video-notice__hint">YouTube-Einbettungen zeigen bei <code>file://</code> Error&nbsp;153 — das ist eine YouTube-Richtlinie und kann nicht umgangen werden. Starte <code>start.sh</code> oder <code>python3 -m http.server 8765</code> im Projektordner.</p>
             </div>
             <div class="video-embed" id="videoEmbed">
+              <button
+                type="button"
+                class="video-embed__poster"
+                id="videoPoster"
+                aria-label="Video abspielen: Warum kleine PV-Anlagen sich schnell rechnen"
+              >
+                <img
+                  src="video-thumbnail.png"
+                  alt="Photovoltaik Beratung mit Enno Scharf – Video-Vorschaubild"
+                  width="1080"
+                  height="1920"
+                  loading="lazy"
+                  decoding="async"
+                >
+                <span class="video-embed__play" aria-hidden="true">
+                  <svg viewBox="0 0 68 68" width="68" height="68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="34" cy="34" r="34" fill="rgba(7, 21, 37, 0.72)"/>
+                    <path d="M28 22l22 12-22 12V22z" fill="#fff"/>
+                  </svg>
+                </span>
+              </button>
               <iframe
-                src="https://www.youtube.com/embed/9GIppt-UMN4"
+                id="videoIframe"
                 title="Warum kleine PV-Anlagen sich schnell rechnen"
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

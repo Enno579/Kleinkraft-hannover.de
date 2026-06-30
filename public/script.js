@@ -759,21 +759,44 @@
 
   /* ---- Contact form: see public/contact-form.js ---- */
 
-  /* ---- YouTube embed (Error 153 fix for localhost) ---- */
+  /* ---- YouTube embed (click-to-play with thumbnail) ---- */
 
   var YOUTUBE_VIDEO_ID = '9GIppt-UMN4';
-  var videoIframe = document.querySelector('#video iframe, .video-embed iframe');
+  var videoEmbed = document.getElementById('videoEmbed');
+  var videoPoster = document.getElementById('videoPoster');
+  var videoIframe = document.getElementById('videoIframe');
   var videoFileNotice = document.getElementById('videoFileNotice');
 
-  if (location.protocol === 'file:') {
-    if (videoFileNotice) videoFileNotice.hidden = false;
-    if (videoIframe) videoIframe.removeAttribute('src');
-  } else if (videoIframe && (location.protocol === 'http:' || location.protocol === 'https:')) {
+  function buildYouTubeEmbedUrl(autoplay) {
     var origin = encodeURIComponent(location.origin);
-    videoIframe.src =
+    var url =
       'https://www.youtube.com/embed/' + YOUTUBE_VIDEO_ID +
       '?origin=' + origin +
       '&widget_referrer=' + origin;
+    if (autoplay) url += '&autoplay=1';
+    return url;
+  }
+
+  function playYouTubeVideo() {
+    if (!videoEmbed || !videoIframe) return;
+
+    if (location.protocol === 'file:') {
+      if (videoFileNotice) videoFileNotice.hidden = false;
+      return;
+    }
+
+    if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
+
+    videoIframe.src = buildYouTubeEmbedUrl(true);
+    videoEmbed.classList.add('is-playing');
+  }
+
+  if (location.protocol === 'file:') {
+    if (videoFileNotice) videoFileNotice.hidden = false;
+  }
+
+  if (videoPoster) {
+    videoPoster.addEventListener('click', playYouTubeVideo);
   }
 
   /* ---- Footer year ---- */
