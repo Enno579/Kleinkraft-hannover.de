@@ -1272,6 +1272,10 @@ button, input, select, textarea {
   background: var(--bg-page);
   color: var(--navy-900);
   overflow: hidden;
+  --finanz-neon-pink: #ff2d95;
+  --finanz-neon-purple: #a855f7;
+  --finanz-neon-cyan: #06d6e8;
+  --finanz-neon-lime: #84cc16;
 }
 
 .finanz__ambient {
@@ -1279,14 +1283,26 @@ button, input, select, textarea {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 55% 45% at 12% 55%, rgba(220, 80, 80, 0.1) 0%, transparent 70%),
-    radial-gradient(ellipse 55% 45% at 88% 55%, rgba(34, 168, 90, 0.1) 0%, transparent 70%),
-    radial-gradient(ellipse 30% 20% at 50% 0%, rgba(232, 184, 10, 0.06) 0%, transparent 100%);
+    radial-gradient(ellipse 50% 40% at 8% 60%, rgba(255, 45, 149, 0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 92% 55%, rgba(132, 204, 22, 0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 35% 25% at 50% 5%, rgba(168, 85, 247, 0.1) 0%, transparent 100%),
+    radial-gradient(ellipse 30% 20% at 50% 95%, rgba(6, 214, 232, 0.08) 0%, transparent 100%);
+  animation: finanz-ambient-shift 12s ease-in-out infinite;
+}
+
+.finanz__grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 .finanz__header {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   text-align: center;
   max-width: 52rem;
 }
@@ -1310,10 +1326,12 @@ button, input, select, textarea {
 }
 
 .finanz__title-accent {
-  background: linear-gradient(90deg, var(--solar-dark) 0%, #c9a00e 50%, var(--solar-dark) 100%);
+  background: linear-gradient(90deg, var(--finanz-neon-purple) 0%, var(--solar-dark) 45%, var(--finanz-neon-cyan) 100%);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: finanz-title-shimmer 6s ease-in-out infinite;
 }
 
 .finanz__punch {
@@ -1343,7 +1361,7 @@ button, input, select, textarea {
 
 .finanz__arena {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   display: grid;
   grid-template-columns: 1fr;
   margin-top: clamp(2.5rem, 6vw, 4rem);
@@ -1352,7 +1370,7 @@ button, input, select, textarea {
 @media (min-width: 768px) {
   .finanz__arena {
     grid-template-columns: 1fr 1fr;
-    min-height: 34rem;
+    min-height: 36rem;
   }
 }
 
@@ -1361,39 +1379,128 @@ button, input, select, textarea {
   padding: clamp(2.5rem, 5vw, 3.5rem) clamp(1.5rem, 4vw, 3rem);
   display: flex;
   align-items: center;
+  overflow: hidden;
+  transition: filter 0.4s var(--ease);
 }
 
 .finanz__side--rent {
   background:
-    linear-gradient(155deg, var(--rose-soft) 0%, var(--rose-mid) 45%, #f9e0e0 100%);
-  animation: finanz-pulse-danger 4s ease-in-out infinite;
+    linear-gradient(155deg,
+      rgba(255, 45, 149, 0.08) 0%,
+      var(--rose-soft) 18%,
+      var(--rose-mid) 50%,
+      rgba(168, 85, 247, 0.06) 100%);
+  animation: finanz-pulse-danger 3.5s ease-in-out infinite;
+  border-bottom: 2px solid rgba(255, 45, 149, 0.25);
+}
+
+.finanz__side--rent::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 2px solid transparent;
+  border-image: linear-gradient(135deg, rgba(255, 45, 149, 0.5), rgba(168, 85, 247, 0.2), transparent) 1;
+  opacity: 0.6;
 }
 
 .finanz__side--own {
   background:
-    linear-gradient(205deg, var(--mint-soft) 0%, var(--mint-mid) 45%, #d8f0e2 100%);
-  animation: finanz-glow-own 4s ease-in-out infinite;
+    linear-gradient(205deg,
+      rgba(132, 204, 22, 0.1) 0%,
+      var(--mint-soft) 18%,
+      var(--mint-mid) 50%,
+      rgba(6, 214, 232, 0.08) 100%);
+  animation: finanz-glow-own 3.5s ease-in-out infinite;
+  border-bottom: 2px solid rgba(132, 204, 22, 0.3);
+}
+
+.finanz__side--own::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 2px solid transparent;
+  border-image: linear-gradient(225deg, rgba(132, 204, 22, 0.5), rgba(6, 214, 232, 0.25), transparent) 1;
+  opacity: 0.6;
+}
+
+.finanz__side--rent:hover,
+.finanz__side--rent:focus-within {
+  animation-duration: 2s;
+}
+
+.finanz__side--own:hover,
+.finanz__side--own:focus-within {
+  animation-duration: 2s;
 }
 
 @media (min-width: 768px) {
   .finanz__side--rent {
     clip-path: polygon(0 0, 100% 0, calc(100% - 2.5rem) 100%, 0 100%);
     padding-right: 3.5rem;
+    border-bottom: none;
+    border-right: 2px solid rgba(255, 45, 149, 0.2);
   }
 
   .finanz__side--own {
     clip-path: polygon(2.5rem 0, 100% 0, 100% 100%, 0 100%);
     padding-left: 3.5rem;
+    border-bottom: none;
+    border-left: 2px solid rgba(132, 204, 22, 0.25);
   }
 }
 
+.finanz__side-fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.finanz__coin {
+  position: absolute;
+  font-size: clamp(0.85rem, 2vw, 1.1rem);
+  font-weight: 800;
+  color: rgba(255, 45, 149, 0.35);
+  text-shadow: 0 0 12px rgba(255, 45, 149, 0.4);
+  animation: finanz-coin-fall 4s linear infinite;
+  opacity: 0;
+}
+
+.finanz__coin--1 { left: 12%; animation-delay: 0s; animation-duration: 3.8s; }
+.finanz__coin--2 { left: 28%; animation-delay: 0.8s; animation-duration: 4.2s; font-size: 0.9em; }
+.finanz__coin--3 { left: 55%; animation-delay: 1.6s; animation-duration: 3.5s; }
+.finanz__coin--4 { left: 72%; animation-delay: 2.2s; animation-duration: 4.5s; font-size: 1.1em; }
+.finanz__coin--5 { left: 88%; animation-delay: 0.4s; animation-duration: 3.2s; }
+
+.finanz__spark {
+  position: absolute;
+  font-size: clamp(0.75rem, 1.8vw, 1rem);
+  font-weight: 800;
+  color: rgba(132, 204, 22, 0.45);
+  text-shadow: 0 0 14px rgba(6, 214, 232, 0.5);
+  animation: finanz-spark-rise 4.5s ease-out infinite;
+  opacity: 0;
+}
+
+.finanz__spark--1 { left: 15%; animation-delay: 0s; }
+.finanz__spark--2 { left: 35%; animation-delay: 1s; color: rgba(6, 214, 232, 0.5); }
+.finanz__spark--3 { left: 58%; animation-delay: 2s; }
+.finanz__spark--4 { left: 75%; animation-delay: 0.5s; color: rgba(6, 214, 232, 0.45); }
+.finanz__spark--5 { left: 90%; animation-delay: 1.8s; }
+
 .finanz__side-inner {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 26rem;
 }
 
 .finanz__side--rent .finanz__side-inner {
   margin-inline: auto;
+  animation: finanz-shake-subtle 6s ease-in-out infinite;
 }
 
 @media (min-width: 768px) {
@@ -1405,50 +1512,159 @@ button, input, select, textarea {
   .finanz__side--own .finanz__side-inner {
     margin-left: 0;
     margin-right: auto;
+    animation: finanz-rise-subtle 5s ease-in-out infinite;
   }
 }
 
 .finanz__icon {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
   opacity: 0.9;
 }
 
-.finanz__icon--rent { color: var(--rose-accent); }
-.finanz__icon--own { color: var(--mint-text); }
+.finanz__icon--rent {
+  color: var(--finanz-neon-pink);
+  filter: drop-shadow(0 0 8px rgba(255, 45, 149, 0.35));
+}
+
+.finanz__icon--own {
+  color: var(--finanz-neon-lime);
+  filter: drop-shadow(0 0 8px rgba(132, 204, 22, 0.4));
+}
 
 .finanz__battle-label {
-  font-size: clamp(2.75rem, 9vw, 4.25rem);
+  font-size: clamp(2.5rem, 8.5vw, 4rem);
   font-weight: 900;
   letter-spacing: -0.05em;
-  line-height: 0.92;
-  text-transform: uppercase;
+  line-height: 0.95;
+  text-transform: none;
   color: var(--rose-text);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.25rem;
+  text-shadow: 0 0 40px rgba(255, 45, 149, 0.25);
 }
 
 .finanz__battle-label--own {
   color: var(--mint-text);
+  text-shadow: 0 0 40px rgba(132, 204, 22, 0.3);
+}
+
+.finanz__battle-hook {
+  font-size: clamp(0.95rem, 2.2vw, 1.1rem);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--rose-text);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.01em;
+}
+
+.finanz__battle-hook strong {
+  font-weight: 800;
+}
+
+.finanz__battle-hook--own {
+  color: var(--mint-text);
 }
 
 .finanz__side-title {
-  font-size: 1.15rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gray-500);
   margin-bottom: 1rem;
 }
 
-.finanz__side-lead {
-  font-size: 0.98rem;
-  line-height: 1.65;
-  color: var(--gray-600);
+.finanz__meter {
   margin-bottom: 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(12, 35, 66, 0.08);
 }
 
-.finanz__side-lead strong {
-  color: var(--navy-900);
+.finanz__meter--drain {
+  border-color: rgba(255, 45, 149, 0.2);
+  box-shadow: 0 0 20px rgba(255, 45, 149, 0.08);
+}
+
+.finanz__meter--gain {
+  border-color: rgba(132, 204, 22, 0.25);
+  box-shadow: 0 0 20px rgba(132, 204, 22, 0.1);
+}
+
+.finanz__meter-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 0.75rem;
+  margin-bottom: 0.55rem;
+}
+
+.finanz__meter-label {
+  font-size: 0.72rem;
   font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.finanz__meter-value {
+  font-size: clamp(1.15rem, 3vw, 1.45rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.finanz__meter--drain .finanz__meter-value {
+  color: var(--rose-text);
+  text-shadow: 0 0 16px rgba(255, 45, 149, 0.2);
+}
+
+.finanz__meter--gain .finanz__meter-value {
+  color: var(--mint-text);
+  text-shadow: 0 0 16px rgba(132, 204, 22, 0.25);
+}
+
+.finanz__meter-track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(12, 35, 66, 0.08);
+  overflow: hidden;
+}
+
+.finanz__meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  width: 0;
+  transition: width 1.8s var(--ease);
+}
+
+.finanz__arena.is-animated .finanz__meter-fill--drain {
+  width: 92%;
+  background: linear-gradient(90deg, var(--finanz-neon-pink), var(--finanz-neon-purple));
+  box-shadow: 0 0 12px rgba(255, 45, 149, 0.5);
+  animation: finanz-meter-pulse-danger 2s ease-in-out infinite;
+}
+
+.finanz__arena.is-animated .finanz__meter-fill--gain {
+  width: 78%;
+  background: linear-gradient(90deg, var(--finanz-neon-lime), var(--finanz-neon-cyan));
+  box-shadow: 0 0 12px rgba(132, 204, 22, 0.45);
+  animation: finanz-meter-pulse-gain 2.5s ease-in-out infinite;
+}
+
+.finanz__meter-tagline {
+  margin-top: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--rose-text);
+  opacity: 0.85;
+}
+
+.finanz__meter-tagline--own {
+  color: var(--mint-text);
 }
 
 .finanz__points {
@@ -1456,7 +1672,7 @@ button, input, select, textarea {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .finanz__points li {
@@ -1475,11 +1691,13 @@ button, input, select, textarea {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--rose-accent);
+  background: var(--finanz-neon-pink);
+  box-shadow: 0 0 6px rgba(255, 45, 149, 0.4);
 }
 
 .finanz__points--own li::before {
-  background: var(--mint-accent);
+  background: var(--finanz-neon-lime);
+  box-shadow: 0 0 6px rgba(132, 204, 22, 0.45);
 }
 
 .finanz__verdict {
@@ -1518,7 +1736,7 @@ button, input, select, textarea {
   box-shadow:
     0 0 0 6px rgba(232, 184, 10, 0.12),
     var(--shadow-soft),
-    0 0 32px rgba(232, 184, 10, 0.2);
+    0 0 32px rgba(168, 85, 247, 0.25);
   animation: finanz-vs-glow 3s ease-in-out infinite;
 }
 
@@ -1526,7 +1744,10 @@ button, input, select, textarea {
   font-size: clamp(1rem, 3vw, 1.35rem);
   font-weight: 900;
   letter-spacing: 0.12em;
-  color: var(--solar);
+  background: linear-gradient(135deg, var(--solar-dark), var(--finanz-neon-purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 @media (max-width: 767px) {
@@ -1543,11 +1764,15 @@ button, input, select, textarea {
   .finanz__side--own {
     padding-top: 3.5rem;
   }
+
+  .finanz__side--own .finanz__side-inner {
+    animation: finanz-rise-subtle 5s ease-in-out infinite;
+  }
 }
 
 .finanz__footer {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   text-align: center;
   margin-top: clamp(2.5rem, 5vw, 3.5rem);
 }
@@ -1576,16 +1801,19 @@ button, input, select, textarea {
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--navy-950);
-  background: linear-gradient(135deg, var(--solar) 0%, #f5d76e 100%);
+  background: linear-gradient(135deg, var(--solar) 0%, #f5d76e 50%, var(--finanz-neon-cyan) 100%);
+  background-size: 200% auto;
   padding: 0.95rem 1.75rem;
   border-radius: 999px;
   box-shadow: 0 8px 24px rgba(232, 184, 10, 0.25);
-  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), background-position 0.4s var(--ease);
+  animation: finanz-cta-shimmer 8s ease-in-out infinite;
 }
 
 .finanz__cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(232, 184, 10, 0.35);
+  box-shadow: 0 12px 32px rgba(168, 85, 247, 0.25);
+  background-position: 100% center;
 }
 
 .finanz__disclaimer {
@@ -1596,19 +1824,95 @@ button, input, select, textarea {
   margin: 2rem auto 0;
 }
 
+@keyframes finanz-ambient-shift {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.02); }
+}
+
+@keyframes finanz-title-shimmer {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+}
+
 @keyframes finanz-pulse-danger {
-  0%, 100% { box-shadow: inset 0 0 60px rgba(220, 80, 80, 0.04); }
-  50% { box-shadow: inset 0 0 80px rgba(220, 80, 80, 0.1); }
+  0%, 100% {
+    box-shadow:
+      inset 0 0 60px rgba(255, 45, 149, 0.04),
+      0 0 0 rgba(255, 45, 149, 0);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 90px rgba(255, 45, 149, 0.12),
+      0 0 30px rgba(168, 85, 247, 0.08);
+  }
 }
 
 @keyframes finanz-glow-own {
-  0%, 100% { box-shadow: inset 0 0 60px rgba(34, 168, 90, 0.04); }
-  50% { box-shadow: inset 0 0 80px rgba(232, 184, 10, 0.08); }
+  0%, 100% {
+    box-shadow:
+      inset 0 0 60px rgba(132, 204, 22, 0.05),
+      0 0 0 rgba(132, 204, 22, 0);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 90px rgba(6, 214, 232, 0.1),
+      0 0 35px rgba(132, 204, 22, 0.12);
+  }
 }
 
 @keyframes finanz-vs-glow {
-  0%, 100% { box-shadow: 0 0 0 6px rgba(232, 184, 10, 0.12), var(--shadow-soft), 0 0 32px rgba(232, 184, 10, 0.2); }
-  50% { box-shadow: 0 0 0 10px rgba(232, 184, 10, 0.16), var(--shadow-card), 0 0 48px rgba(232, 184, 10, 0.3); }
+  0%, 100% {
+    box-shadow:
+      0 0 0 6px rgba(232, 184, 10, 0.12),
+      var(--shadow-soft),
+      0 0 32px rgba(168, 85, 247, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 0 10px rgba(168, 85, 247, 0.15),
+      var(--shadow-card),
+      0 0 48px rgba(6, 214, 232, 0.25);
+  }
+}
+
+@keyframes finanz-coin-fall {
+  0% { transform: translateY(-10%) rotate(0deg); opacity: 0; }
+  8% { opacity: 0.7; }
+  85% { opacity: 0.4; }
+  100% { transform: translateY(110vh) rotate(180deg); opacity: 0; }
+}
+
+@keyframes finanz-spark-rise {
+  0% { transform: translateY(80%) scale(0.6); opacity: 0; }
+  15% { opacity: 0.8; }
+  100% { transform: translateY(-120%) scale(1.1); opacity: 0; }
+}
+
+@keyframes finanz-shake-subtle {
+  0%, 92%, 100% { transform: translateX(0); }
+  94% { transform: translateX(-2px); }
+  96% { transform: translateX(2px); }
+  98% { transform: translateX(-1px); }
+}
+
+@keyframes finanz-rise-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes finanz-meter-pulse-danger {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.15); }
+}
+
+@keyframes finanz-meter-pulse-gain {
+  0%, 100% { filter: brightness(1); box-shadow: 0 0 12px rgba(132, 204, 22, 0.45); }
+  50% { filter: brightness(1.2); box-shadow: 0 0 20px rgba(6, 214, 232, 0.5); }
+}
+
+@keyframes finanz-cta-shimmer {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
 }
 
 /* ---- Hannover City Strip ---- */
@@ -3798,8 +4102,26 @@ button, input, select, textarea {
   }
   .finanz__side--rent,
   .finanz__side--own,
-  .finanz__vs {
+  .finanz__vs,
+  .finanz__ambient,
+  .finanz__title-accent,
+  .finanz__cta,
+  .finanz__side--rent .finanz__side-inner,
+  .finanz__side--own .finanz__side-inner,
+  .finanz__coin,
+  .finanz__spark {
     animation: none;
+  }
+  .finanz__arena.is-animated .finanz__meter-fill--drain,
+  .finanz__arena.is-animated .finanz__meter-fill--gain {
+    animation: none;
+    width: 92%;
+  }
+  .finanz__arena.is-animated .finanz__meter-fill--gain {
+    width: 78%;
+  }
+  .finanz__meter-fill {
+    transition: none;
   }
   .finanz__cta:hover {
     transform: none;

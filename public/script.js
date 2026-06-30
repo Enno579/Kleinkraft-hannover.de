@@ -757,6 +757,69 @@
     });
   });
 
+  /* ---- Finanz arena: animated counters ---- */
+
+  var finanzArena = document.getElementById('finanzArena');
+  if (finanzArena) {
+    var finanzCounters = finanzArena.querySelectorAll('[data-finanz-count]');
+    var finanzAnimated = false;
+
+    function formatFinanzNumber(n) {
+      return n.toLocaleString('de-DE');
+    }
+
+    function animateFinanzCounters() {
+      if (finanzAnimated) return;
+      finanzAnimated = true;
+      finanzArena.classList.add('is-animated');
+
+      finanzCounters.forEach(function (el) {
+        var target = parseInt(el.getAttribute('data-finanz-count'), 10);
+        var prefix = el.getAttribute('data-finanz-prefix') || '';
+        var suffix = el.getAttribute('data-finanz-suffix') || '';
+        if (!target || isNaN(target)) return;
+
+        var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReduced) {
+          el.innerHTML = prefix + formatFinanzNumber(target) + suffix;
+          return;
+        }
+
+        var start = 0;
+        var duration = 1800;
+        var startTime = null;
+
+        function tick(now) {
+          if (!startTime) startTime = now;
+          var progress = Math.min((now - startTime) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          var current = Math.round(start + (target - start) * eased);
+          el.innerHTML = prefix + formatFinanzNumber(current) + suffix;
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+
+        requestAnimationFrame(tick);
+      });
+    }
+
+    if ('IntersectionObserver' in window) {
+      var finanzObserver = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              animateFinanzCounters();
+              finanzObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.25, rootMargin: '0px 0px -40px 0px' }
+      );
+      finanzObserver.observe(finanzArena);
+    } else {
+      animateFinanzCounters();
+    }
+  }
+
   /* ---- Contact form: see public/contact-form.js ---- */
 
   /* ---- YouTube embed (click-to-play with thumbnail) ---- */

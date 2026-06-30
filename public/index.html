@@ -604,6 +604,7 @@
     <!-- 6. Finanzierung -->
     <section class="finanz" id="finanzierung" aria-labelledby="finanz-title">
       <div class="finanz__ambient" aria-hidden="true"></div>
+      <div class="finanz__grain" aria-hidden="true"></div>
 
       <header class="finanz__header container reveal">
         <p class="finanz__eyebrow">Wer bekommt dein Geld?</p>
@@ -615,12 +616,19 @@
           Nach 20 Jahren ohne Anlage: <strong>0&nbsp;€ Eigenkapital.</strong> <strong>0&nbsp;€ Anlage.</strong> Nur höhere Rechnungen.
         </p>
         <p class="finanz__hook">
-          Warum solltest du weiter jeden Monat zahlen — und am Ende nichts in der Hand haben?
+          Jeden Monat raus — am Ende nichts. Oder: jeden Monat investieren — und am Ende gehört dir was.
         </p>
       </header>
 
-      <div class="finanz__arena reveal">
+      <div class="finanz__arena reveal" id="finanzArena">
         <article class="finanz__side finanz__side--rent">
+          <div class="finanz__side-fx" aria-hidden="true">
+            <span class="finanz__coin finanz__coin--1">€</span>
+            <span class="finanz__coin finanz__coin--2">€</span>
+            <span class="finanz__coin finanz__coin--3">€</span>
+            <span class="finanz__coin finanz__coin--4">€</span>
+            <span class="finanz__coin finanz__coin--5">€</span>
+          </div>
           <div class="finanz__side-inner">
             <div class="finanz__icon finanz__icon--rent" aria-hidden="true">
               <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
@@ -633,16 +641,26 @@
                 <path d="M34 14l5-5M39 14V9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </div>
-            <p class="finanz__battle-label">Mieten</p>
-            <h3 class="finanz__side-title">Ohne Anlage</h3>
-            <p class="finanz__side-lead">Du zahlst Strom jeden Monat an den Versorger — Jahr für Jahr. Die Rechnung steigt im Schnitt um rund 4&nbsp;% pro Jahr.</p>
+            <p class="finanz__battle-label">Du zahlst.</p>
+            <p class="finanz__battle-hook">Jeden Monat. Am Ende: <strong>null.</strong></p>
+            <h3 class="finanz__side-title">Ohne Anlage · Mieten</h3>
+            <div class="finanz__meter finanz__meter--drain">
+              <div class="finanz__meter-head">
+                <span class="finanz__meter-label">Verbrannt in 20 Jahren</span>
+                <span class="finanz__meter-value" data-finanz-count="48000" data-finanz-prefix="~" data-finanz-suffix="&nbsp;€">~48.000&nbsp;€</span>
+              </div>
+              <div class="finanz__meter-track" role="presentation">
+                <span class="finanz__meter-fill finanz__meter-fill--drain"></span>
+              </div>
+              <p class="finanz__meter-tagline">Das ist verbranntes Geld. Monat für Monat.</p>
+            </div>
             <ul class="finanz__points">
-              <li>Monatlich zahlen, nichts besitzen</li>
-              <li>Preise steigen, du hast keine Kontrolle</li>
-              <li>Nach 20 Jahren: null Eigentum</li>
+              <li>Du zahlst — der Versorger kassiert</li>
+              <li>Preise steigen, du hast null Kontrolle</li>
+              <li>Nach 20 Jahren: 0&nbsp;€ Eigentum, nur Rechnungen</li>
             </ul>
             <p class="finanz__verdict finanz__verdict--rent">
-              20 Jahre zahlen. Am Ende <strong>nichts</strong> in der Hand — nur höhere Rechnungen.
+              Weiter so zahlen heißt: <strong>Geld weg</strong>, ohne dass was bei dir bleibt.
             </p>
           </div>
         </article>
@@ -652,6 +670,13 @@
         </div>
 
         <article class="finanz__side finanz__side--own">
+          <div class="finanz__side-fx finanz__side-fx--own" aria-hidden="true">
+            <span class="finanz__spark finanz__spark--1">+</span>
+            <span class="finanz__spark finanz__spark--2">€</span>
+            <span class="finanz__spark finanz__spark--3">+</span>
+            <span class="finanz__spark finanz__spark--4">€</span>
+            <span class="finanz__spark finanz__spark--5">+</span>
+          </div>
           <div class="finanz__side-inner">
             <div class="finanz__icon finanz__icon--own" aria-hidden="true">
               <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
@@ -661,16 +686,26 @@
                 <path d="M18 42V30h16v12" stroke="currentColor" stroke-width="2.2"/>
               </svg>
             </div>
-            <p class="finanz__battle-label finanz__battle-label--own">Kaufen</p>
-            <h3 class="finanz__side-title">Mit Anlage</h3>
-            <p class="finanz__side-lead">Was du sowieso für Strom ausgibst, fließt in <strong>deine eigene Technik</strong> — auf Balkon, Dach oder Garage.</p>
+            <p class="finanz__battle-label finanz__battle-label--own">Du gewinnst.</p>
+            <p class="finanz__battle-hook finanz__battle-hook--own">Jeden Monat sparst du. <strong>Dein Geld bleibt bei dir.</strong></p>
+            <h3 class="finanz__side-title">Mit Anlage · Kaufen</h3>
+            <div class="finanz__meter finanz__meter--gain">
+              <div class="finanz__meter-head">
+                <span class="finanz__meter-label">Dein Eigentum nach 20 Jahren</span>
+                <span class="finanz__meter-value" data-finanz-count="8000" data-finanz-prefix="" data-finanz-suffix="&nbsp;€+">8.000&nbsp;€+</span>
+              </div>
+              <div class="finanz__meter-track" role="presentation">
+                <span class="finanz__meter-fill finanz__meter-fill--gain"></span>
+              </div>
+              <p class="finanz__meter-tagline finanz__meter-tagline--own">Investieren statt verbrennen. Jeden Monat.</p>
+            </div>
             <ul class="finanz__points finanz__points--own">
-              <li>Geld in dein Zuhause, nicht in fremde Taschen</li>
-              <li>Weniger Netzbezug, mehr eigener Strom</li>
-              <li>Planbare Rate statt Preisschock</li>
+              <li>Dein Geld fließt in deine Technik — nicht in fremde Taschen</li>
+              <li>Weniger Netzbezug, mehr eigener Strom vom Dach</li>
+              <li>Planbare Rate statt Preisschock vom Versorger</li>
             </ul>
             <p class="finanz__verdict finanz__verdict--own">
-              Nach 20 Jahren: <strong>deine PV-Anlage</strong> — und weiter Strom von deinem Dach.
+              Nach 20 Jahren: <strong>deine PV-Anlage</strong> — und weiter Strom, der dir gehört.
             </p>
           </div>
         </article>
