@@ -1,0 +1,63 @@
+PROBLEM: Formular geht nicht – GitHub-Ordnerstruktur ist falsch
+================================================================
+
+Auf GitHub liegen die Dateien FLACH im Hauptordner.
+Vercel/Next.js erkennt das Projekt deshalb NICHT als Next.js-App.
+Die API /api/contact existiert dann nicht → Formular schlägt fehl.
+
+SO MUSS ES AUSSEHEN (GitHub Repo):
+----------------------------------
+
+kleinkraft-hannover/
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── api/
+│       └── contact/
+│           └── route.ts
+├── public/
+│   ├── index.html
+│   ├── impressum.html
+│   ├── datenschutz.html
+│   ├── style.css
+│   ├── script.js
+│   └── (alle Bilder: hannover.jpg, enno-portrait.png, …)
+├── package.json
+├── next.config.ts
+├── tsconfig.json
+└── .gitignore
+
+SO IST ES BEI DIR JETZT (FALSCH):
+---------------------------------
+layout.tsx, page.tsx, route.ts → im Hauptordner (ohne app/)
+index.html, script.js → im Hauptordner (ohne public/)
+package.json, next.config.ts → FEHLEN komplett!
+
+SCHNELLSTE LÖSUNG:
+------------------
+1. GitHub: Alle Dateien im Repo löschen (oder neues Repo anlegen)
+
+2. Am Mac öffnen: /Users/ennoscharf/Desktop/balkonkraftwerk/
+
+3. Auf GitHub "Upload files" – diese 4 Dinge hochziehen:
+   □ Ordner "app" (komplett mit Unterordnern)
+   □ Ordner "public" (komplett mit Bildern!)
+   □ package.json
+   □ next.config.ts
+   □ tsconfig.json
+   □ .gitignore
+
+4. Vercel → Deployments → "Redeploy"
+
+5. Vercel → Settings → Environment Variables:
+   Name:  RESEND_API_KEY
+   Value: (dein Key von resend.com/api-keys)
+
+6. Formular testen auf kleinkraft-hannover.de
+
+LOKALER CODE IST KORREKT:
+-------------------------
+✓ fetch('/api/contact') in public/script.js
+✓ app/api/contact/route.ts mit Resend + RESEND_API_KEY
+✓ Erfolgsmeldung nach Versand
+✓ Google Ads Conversion (Label in script.js Zeile 764 eintragen!)

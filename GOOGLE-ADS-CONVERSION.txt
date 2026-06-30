@@ -1,0 +1,57 @@
+Google Ads Conversion – Kontaktformular
+========================================
+
+Dein Google-Tag ist bereits installiert (AW-328006841).
+Für das Conversion-Tracking fehlt nur noch das CONVERSION-LABEL.
+
+SCHRITT 1: Conversion-Aktion in Google Ads anlegen
+--------------------------------------------------
+1. Öffne https://ads.google.com
+2. Klicke links auf „Ziele“ (oder „Kampagnen“ → „Conversions“)
+3. Klicke auf „+ Conversion-Aktion erstellen“
+4. Wähle „Website“
+5. Wähle „Manuell mit Code einrichten“ (nicht „URL“ allein)
+6. Name z. B.: „Kontaktformular gesendet“
+7. Kategorie: „Kontakt“ oder „Lead“
+8. Wert: nach Wunsch (z. B. „Keinen Wert verwenden“)
+9. Speichern / Fertig
+
+SCHRITT 2: Conversion-Label kopieren
+------------------------------------
+1. Gehe zu „Ziele“ → „Conversions“ (Übersicht deiner Conversion-Aktionen)
+2. Klicke auf die neue Aktion „Kontaktformular gesendet“
+3. Klicke auf „Tag einrichten“ oder „Installation des Tags“
+4. Wähle „Tag selbst installieren“ / „Google-Tag ist bereits auf der Website“
+5. Wähle „Ereignis-Snippet“ (nicht nur das globale Tag)
+6. Du siehst Code wie:
+
+   gtag('event', 'conversion', {'send_to': 'AW-328006841/AbCdEfGhIjK'});
+
+7. Kopiere den kompletten Wert in den Anführungszeichen bei send_to
+   → z. B.: AW-328006841/AbCdEfGhIjK
+   (Das ist Konto-ID + Label – beides zusammen!)
+
+SCHRITT 3: Label in script.js eintragen
+----------------------------------------
+Datei: public/script.js (ca. Zeile 763)
+
+Ändere diese Zeile:
+
+   var GOOGLE_ADS_CONVERSION_SEND_TO = 'AW-328006841/';
+
+zu z. B.:
+
+   var GOOGLE_ADS_CONVERSION_SEND_TO = 'AW-328006841/AbCdEfGhIjK';
+
+(Ersetze AbCdEfGhIjK durch DEIN Label aus Google Ads.)
+
+SCHRITT 4: Hochladen
+--------------------
+- public/script.js auf den Server hochladen (ersetzen)
+- Formular testen → Erfolgsmeldung → in Google Ads unter Conversions prüfen
+  (kann einige Stunden dauern, „Tag-Status“ sollte „Aktiv“ werden)
+
+HINWEIS
+-------
+Die Conversion wird nur ausgelöst, wenn das Formular ERFOLGREICH gesendet wurde
+(nach der Meldung „Vielen Dank! Wir melden uns schnellstmöglich bei dir.“).
