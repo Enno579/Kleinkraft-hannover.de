@@ -77,6 +77,9 @@ function buildEmailHtml(data: Required<Pick<ContactPayload, 'vorname' | 'nachnam
   `;
 }
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function GET() {
   return NextResponse.json({
     ok: true,
