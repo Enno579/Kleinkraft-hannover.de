@@ -3163,7 +3163,7 @@ button, input, select, textarea {
 .reviews-section__header {
   text-align: center;
   max-width: 42rem;
-  margin: 0 auto 3rem;
+  margin: 0 auto 2rem;
 }
 
 .reviews-section__eyebrow {
@@ -3213,23 +3213,139 @@ button, input, select, textarea {
   color: var(--gray-500);
 }
 
-.reviews-grid {
-  display: grid;
+.reviews-carousel {
+  position: relative;
+  margin-top: 0.5rem;
+}
+
+.reviews-carousel__viewport {
+  overflow: hidden;
+  width: 100%;
+  padding: 0.35rem 0 0.5rem;
+  touch-action: pan-y pinch-zoom;
+}
+
+.reviews-carousel__track {
+  display: flex;
   gap: 1.25rem;
-  grid-template-columns: 1fr;
+  will-change: transform;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reviews-carousel__track.is-dragging {
+  transition: none;
+}
+
+.reviews-carousel__track .review-card {
+  flex: 0 0 auto;
+  min-width: 0;
+  opacity: 0.92;
+  transform: scale(0.985);
+  transition:
+    opacity 0.55s ease,
+    transform 0.55s ease,
+    box-shadow 0.25s ease;
+}
+
+.reviews-carousel__track .review-card.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.reviews-carousel__bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.35rem;
+}
+
+.reviews-carousel__btn {
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gray-200);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--navy-800);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.reviews-carousel__btn:hover {
+  transform: scale(1.06);
+  border-color: rgba(34, 168, 90, 0.35);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+}
+
+.reviews-carousel__btn:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+.reviews-carousel__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-width: 4rem;
+}
+
+.reviews-carousel__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--gray-300);
+  cursor: pointer;
+  transition: width 0.35s ease, background 0.35s ease, transform 0.35s ease;
+}
+
+.reviews-carousel__dot.is-active {
+  width: 1.65rem;
+  background: linear-gradient(90deg, var(--green) 0%, #34d399 100%);
+  transform: scale(1.05);
+}
+
+.reviews-carousel__dot:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
 }
 
 @media (min-width: 640px) {
-  .reviews-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .reviews-carousel__track {
     gap: 1.35rem;
   }
 }
 
 @media (min-width: 1024px) {
-  .reviews-grid {
-    grid-template-columns: repeat(3, 1fr);
+  .reviews-carousel__track {
     gap: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reviews-carousel__track {
+    transition: none;
+  }
+
+  .reviews-carousel__track .review-card {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .reviews-carousel__btn {
+    transition: none;
+  }
+
+  .reviews-carousel__dot {
+    transition: none;
   }
 }
 
@@ -3247,11 +3363,11 @@ button, input, select, textarea {
   transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 
-.review-card:hover {
+.reviews-carousel__track .review-card:hover {
+  transform: scale(1);
   box-shadow:
     0 2px 4px rgba(15, 23, 42, 0.05),
     0 12px 32px rgba(15, 23, 42, 0.09);
-  transform: translateY(-2px);
 }
 
 .review-card__top {

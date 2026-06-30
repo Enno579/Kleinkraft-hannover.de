@@ -813,9 +813,11 @@
           </div>
         </header>
 
-        <div class="reviews-grid reveal-stagger">
+        <div class="reviews-carousel reveal" id="reviewsCarousel">
+          <div class="reviews-carousel__viewport" id="reviewsViewport">
+            <div class="reviews-carousel__track" id="reviewsTrack">
 
-          <article class="review-card reveal-stagger__item">
+          <article class="review-card">
             <div class="review-card__top">
               <div class="review-card__avatar" aria-hidden="true">BU</div>
               <div class="review-card__meta">
@@ -833,7 +835,7 @@
             <blockquote class="review-card__text">„Ich bin begeistert. Der Preis hat sich für mich schneller bezahlt gemacht als erwartet. Die Montage verlief sauber und termingerecht. Besonders die Beratung durch Herrn Scharf war jederzeit transparent und ehrlich.“</blockquote>
           </article>
 
-          <article class="review-card reveal-stagger__item">
+          <article class="review-card">
             <div class="review-card__top">
               <div class="review-card__avatar" aria-hidden="true">MÜ</div>
               <div class="review-card__meta">
@@ -851,7 +853,7 @@
             <blockquote class="review-card__text">„Vom ersten Gespräch bis zur Inbetriebnahme lief alles absolut professionell. Rückfragen wurden immer schnell beantwortet und die Installation war hervorragend organisiert.“</blockquote>
           </article>
 
-          <article class="review-card reveal-stagger__item">
+          <article class="review-card">
             <div class="review-card__top">
               <div class="review-card__avatar" aria-hidden="true">SI</div>
               <div class="review-card__meta">
@@ -869,7 +871,7 @@
             <blockquote class="review-card__text">„Wir haben mehrere Angebote verglichen und uns letztlich für Herrn Scharf entschieden. Rückblickend war das die richtige Entscheidung. Klare Empfehlung.“</blockquote>
           </article>
 
-          <article class="review-card reveal-stagger__item">
+          <article class="review-card">
             <div class="review-card__top">
               <div class="review-card__avatar" aria-hidden="true">BE</div>
               <div class="review-card__meta">
@@ -887,7 +889,7 @@
             <blockquote class="review-card__text">„Sehr kompetente Beratung, transparente Preise und eine saubere Umsetzung. Genau so wünscht man sich ein Handwerksunternehmen.“</blockquote>
           </article>
 
-          <article class="review-card reveal-stagger__item">
+          <article class="review-card">
             <div class="review-card__top">
               <div class="review-card__avatar" aria-hidden="true">FI</div>
               <div class="review-card__meta">
@@ -905,7 +907,7 @@
             <blockquote class="review-card__text">„Die Wirtschaftlichkeitsberechnung wurde verständlich erklärt und die Umsetzung erfolgte schneller als angekündigt. Wir würden uns jederzeit wieder dafür entscheiden.“</blockquote>
           </article>
 
-          <article class="review-card reveal-stagger__item">
+          <article class="review-card">
             <div class="review-card__top">
               <div class="review-card__avatar" aria-hidden="true">NE</div>
               <div class="review-card__meta">
@@ -923,7 +925,7 @@
             <blockquote class="review-card__text">„Was mich überzeugt hat, war die ehrliche Einschätzung zur Anlagengröße. Es wurde nichts aufgeschwatzt, was für unser Haus keinen Sinn gemacht hätte. Die Anmeldung und der Anschluss wurden ebenfalls zuverlässig erledigt.“</blockquote>
           </article>
 
-          <article class="review-card reveal-stagger__item">
+          <article class="review-card">
             <div class="review-card__top">
               <div class="review-card__avatar" aria-hidden="true">SC</div>
               <div class="review-card__meta">
@@ -941,7 +943,7 @@
             <blockquote class="review-card__text">„Als Mieter mit Balkon war ich unsicher, ob das überhaupt möglich ist. Herr Scharf hat alles verständlich erklärt und die Montage so geplant, dass kaum etwas sichtbar gestört wurde. Seitdem produzieren wir einen Teil unseres Stroms selbst.“</blockquote>
           </article>
 
-          <article class="review-card reveal-stagger__item">
+          <article class="review-card">
             <div class="review-card__top">
               <div class="review-card__avatar" aria-hidden="true">KÖ</div>
               <div class="review-card__meta">
@@ -959,7 +961,7 @@
             <blockquote class="review-card__text">„Termine wurden eingehalten, die Baustelle sauber hinterlassen und die Erklärung zur Speichergröße war nachvollziehbar. Man merkt, dass hier jemand mit Erfahrung arbeitet und nicht nur verkaufen will.“</blockquote>
           </article>
 
-          <article class="review-card reveal-stagger__item">
+          <article class="review-card">
             <div class="review-card__top">
               <div class="review-card__avatar" aria-hidden="true">WA</div>
               <div class="review-card__meta">
@@ -977,7 +979,7 @@
             <blockquote class="review-card__text">„Die Kommunikation war durchgehend unkompliziert — per Telefon und E-Mail immer erreichbar. Besonders positiv: Die Kalkulation auf der Website stimmte im Großen und Ganzen mit dem überein, was am Ende auf dem Dach stand.“</blockquote>
           </article>
 
-          <article class="review-card reveal-stagger__item">
+          <article class="review-card">
             <div class="review-card__top">
               <div class="review-card__avatar" aria-hidden="true">HO</div>
               <div class="review-card__meta">
@@ -995,6 +997,17 @@
             <blockquote class="review-card__text">„Wir haben uns für eine kleinere Anlage mit Speicher entschieden und sind damit sehr zufrieden. Die Montage an der Garage dauerte nur einen Tag. Herr Scharf hat uns ehrlich gesagt, was sich lohnt — und was nicht.“</blockquote>
           </article>
 
+        </div>
+          </div>
+          <div class="reviews-carousel__bar">
+            <button type="button" class="reviews-carousel__btn" id="reviewsPrev" aria-label="Vorherige Bewertungen">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="reviews-carousel__dots" id="reviewsDots" role="tablist" aria-label="Bewertungen navigieren"></div>
+            <button type="button" class="reviews-carousel__btn" id="reviewsNext" aria-label="Nächste Bewertungen">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -1143,6 +1156,7 @@
   </footer>
 
   <script src="contact-form.js" defer></script>
+  <script src="reviews-carousel.js" defer></script>
   <script src="script.js" defer></script>
 </body>
 </html>
