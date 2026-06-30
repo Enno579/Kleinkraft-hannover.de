@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 
 const TO_EMAIL = 'Ennosch93@gmail.com';
 const SUBJECT = 'Neue Beratungsanfrage über kleinkraft-hannover.de';
+const DEFAULT_FROM = 'Kleinkraft Hannover <kontakt@kleinkraft-hannover.de>';
 
 const WOHNSITUATION_LABELS: Record<string, string> = {
   mieter: 'Mieter',
@@ -89,7 +90,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  if (!process.env.RESEND_API_KEY) {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  if (!apiKey) {
     return NextResponse.json(
       { error: 'E-Mail-Versand ist derzeit nicht konfiguriert. Bitte später erneut versuchen.' },
       { status: 500 }
@@ -125,8 +127,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'Kleinkraft Hannover <onboarding@resend.dev>';
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  const fromEmail = process.env.RESEND_FROM_EMAIL?.trim() || DEFAULT_FROM;
+  const resend = new Resend(apiKey);
 
   const { error } = await resend.emails.send({
     from: fromEmail,
