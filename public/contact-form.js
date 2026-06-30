@@ -3,6 +3,16 @@
 
   var GOOGLE_ADS_CONVERSION_SEND_TO = 'AW-328006841/';
 
+  var SUCCESS_MESSAGE_HTML =
+    '<div class="contact-form__feedback-icon" aria-hidden="true">' +
+    '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M20 6L9 17l-5-5"/>' +
+    '</svg></div>' +
+    '<div class="contact-form__feedback-body">' +
+    '<p class="contact-form__feedback-lead">Vielen herzlichen Dank für Ihre Kontaktaufnahme.</p>' +
+    '<p class="contact-form__feedback-sub">Enno Scharf wird sich direkt persönlich innerhalb der nächsten 24 Stunden bei Ihnen melden.</p>' +
+    '</div>';
+
   function trackGoogleAdsConversion() {
     if (typeof gtag !== 'function') return;
     var sendTo = GOOGLE_ADS_CONVERSION_SEND_TO;
@@ -10,34 +20,65 @@
     gtag('event', 'conversion', { send_to: sendTo });
   }
 
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   function initContactForm() {
     var contactForm = document.getElementById('contactForm');
     if (!contactForm || contactForm.dataset.bound === 'true') return;
     contactForm.dataset.bound = 'true';
 
+    var submitBtn = contactForm.querySelector('button[type="submit"]');
     var formFeedback = document.getElementById('formFeedback');
+
     if (!formFeedback) {
-      formFeedback = document.createElement('p');
-      formFeedback.className = 'contact-form__note';
+      formFeedback = document.createElement('div');
       formFeedback.id = 'formFeedback';
+      formFeedback.className = 'contact-form__feedback';
       formFeedback.setAttribute('role', 'status');
       formFeedback.hidden = true;
-      var submitBtn = contactForm.querySelector('button[type="submit"]');
-      if (submitBtn) {
-        contactForm.insertBefore(formFeedback, submitBtn);
+
+      if (submitBtn && submitBtn.nextSibling) {
+        contactForm.insertBefore(formFeedback, submitBtn.nextSibling);
+      } else if (submitBtn) {
+        submitBtn.insertAdjacentElement('afterend', formFeedback);
       } else {
         contactForm.appendChild(formFeedback);
       }
     }
 
-    function showFormFeedback(message, isError) {
-      formFeedback.textContent = message;
+    function revealFeedback() {
       formFeedback.hidden = false;
-      formFeedback.setAttribute('role', isError ? 'alert' : 'status');
+      formFeedback.classList.remove('is-visible');
+      window.requestAnimationFrame(function () {
+        formFeedback.classList.add('is-visible');
+      });
+    }
+
+    function showSuccessFeedback() {
+      formFeedback.className = 'contact-form__feedback contact-form__feedback--success';
+      formFeedback.innerHTML = SUCCESS_MESSAGE_HTML;
+      formFeedback.setAttribute('role', 'status');
+      revealFeedback();
+    }
+
+    function showErrorFeedback(message) {
+      formFeedback.className = 'contact-form__feedback contact-form__feedback--error';
+      formFeedback.innerHTML =
+        '<p class="contact-form__feedback-error-text">' + escapeHtml(message) + '</p>';
+      formFeedback.setAttribute('role', 'alert');
+      revealFeedback();
     }
 
     function clearFormFeedback() {
-      formFeedback.textContent = '';
+      formFeedback.innerHTML = '';
+      formFeedback.className = 'contact-form__feedback';
+      formFeedback.classList.remove('is-visible');
       formFeedback.hidden = true;
       formFeedback.setAttribute('role', 'status');
     }
@@ -56,12 +97,12 @@
       var email = getField('email');
 
       if (!vorname || !nachname || !email) {
-        showFormFeedback('Bitte fülle Vorname, Nachname und E-Mail aus.', true);
+        showErrorFeedback('Bitte fülle Vorname, Nachname und E-Mail aus.');
         return;
       }
 
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showFormFeedback('Bitte gib eine gültige E-Mail-Adresse ein.', true);
+        showErrorFeedback('Bitte gib eine gültige E-Mail-Adresse ein.');
         return;
       }
 
@@ -97,19 +138,17 @@
         .then(function (result) {
           if (result.ok && result.data.success) {
             contactForm.reset();
-            showFormFeedback('Vielen Dank! Wir melden uns schnellstmöglich bei dir.', false);
+            showSuccessFeedback();
             trackGoogleAdsConversion();
           } else {
-            showFormFeedback(
+            showErrorFeedback(
               result.data.error || 'Die Anfrage konnte nicht gesendet werden. Bitte versuche es später erneut.',
-              true,
             );
           }
         })
         .catch(function () {
-          showFormFeedback(
+          showErrorFeedback(
             'Die Anfrage konnte nicht gesendet werden. Bitte prüfe deine Internetverbindung und versuche es erneut.',
-            true,
           );
         })
         .finally(function () {
