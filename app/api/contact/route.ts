@@ -2,7 +2,6 @@ import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
 const TO_EMAIL = 'Ennosch93@gmail.com';
-const SUBJECT = 'Neue Beratungsanfrage über kleinkraft-hannover.de';
 const DEFAULT_FROM = 'Kleinkraft Hannover <kontakt@kleinkraft-hannover.de>';
 
 const WOHNSITUATION_LABELS: Record<string, string> = {
@@ -47,6 +46,13 @@ function escapeHtml(value: string): string {
 function labelFor(value: string | undefined, labels: Record<string, string>): string {
   if (!value) return '–';
   return labels[value] ?? value;
+}
+
+function buildSubject(vorname: string, nachname: string, email: string): string {
+  if (vorname && nachname) {
+    return `Neue Beratungsanfrage – ${vorname} ${nachname}`;
+  }
+  return `Neue Beratungsanfrage – ${email}`;
 }
 
 function buildEmailHtml(data: Required<Pick<ContactPayload, 'vorname' | 'nachname' | 'email'>> & ContactPayload): string {
@@ -134,7 +140,7 @@ export async function POST(request: Request) {
     from: fromEmail,
     to: TO_EMAIL,
     replyTo: email,
-    subject: SUBJECT,
+    subject: buildSubject(vorname, nachname, email),
     html: buildEmailHtml({
       vorname,
       nachname,
