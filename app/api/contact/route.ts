@@ -77,6 +77,14 @@ function buildEmailHtml(data: Required<Pick<ContactPayload, 'vorname' | 'nachnam
   `;
 }
 
+export async function GET() {
+  return NextResponse.json({
+    ok: true,
+    message: 'Kontakt-API ist erreichbar. POST zum Absenden des Formulars.',
+    endpoint: '/api/contact',
+  });
+}
+
 export async function POST(request: Request) {
   if (!process.env.RESEND_API_KEY) {
     return NextResponse.json(
