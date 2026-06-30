@@ -3397,6 +3397,45 @@ button, input, select, textarea {
   min-width: 0;
 }
 
+.review-star--empty {
+  background: linear-gradient(180deg, #e5e7eb 0%, #d1d5db 100%);
+  box-shadow: none;
+}
+
+.review-star--partial {
+  background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 70%, #d1d5db 70%, #d1d5db 100%);
+}
+
+.section-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(1.75rem, 4vw, 2.5rem);
+  text-align: center;
+}
+
+.section-cta .btn {
+  min-width: min(100%, 20rem);
+}
+
+.hannover-strip .section-cta {
+  margin-top: 0.85rem;
+  padding: 0 1rem 0.25rem;
+}
+
+.finanz__footer .section-cta {
+  margin-top: 1.5rem;
+}
+
+.calc-section .section-cta {
+  margin-top: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.reviews-section .section-cta {
+  margin-top: 1.75rem;
+}
+
 .review-card__stars {
   display: flex;
   gap: 0.15rem;
