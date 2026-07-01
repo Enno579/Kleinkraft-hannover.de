@@ -719,9 +719,48 @@
       var maxMonthly = Math.max(ohne.avgMonthly, monthlyMitDisplay, 1);
       var ohnePct = Math.min(100, Math.round((ohne.avgMonthly / maxMonthly) * 100));
       var mitPct = Math.min(100, Math.round((monthlyMitDisplay / maxMonthly) * 100));
+      var savingsPct = ohne.avgMonthly > 0
+        ? Math.round((diffMonthly / ohne.avgMonthly) * 100)
+        : 0;
 
       if (meterOhne) meterOhne.style.width = ohnePct + '%';
       if (meterMit) meterMit.style.width = mitPct + '%';
+
+      var tickerValOhne = document.getElementById('tickerValOhne');
+      var tickerValOhneDup = document.getElementById('tickerValOhneDup');
+      var tickerPctOhne = document.getElementById('tickerPctOhne');
+      var tickerPctOhneDup = document.getElementById('tickerPctOhneDup');
+      var tickerValMit = document.getElementById('tickerValMit');
+      var tickerValMitDup = document.getElementById('tickerValMitDup');
+      var tickerPctMit = document.getElementById('tickerPctMit');
+      var tickerPctMitDup = document.getElementById('tickerPctMitDup');
+      var gainBadge = calcBattle.querySelector('.calc__gain-badge');
+      var lossBadge = calcBattle.querySelector('.calc__loss-badge');
+
+      var ohneTickerVal = '−' + formatEuroMonthly(ohne.avgMonthly) + ' €';
+      var ohneTickerPct = '−' + increasePct + '%';
+      if (tickerValOhne) tickerValOhne.textContent = ohneTickerVal;
+      if (tickerValOhneDup) tickerValOhneDup.textContent = ohneTickerVal;
+      if (tickerPctOhne) tickerPctOhne.textContent = ohneTickerPct;
+      if (tickerPctOhneDup) tickerPctOhneDup.textContent = ohneTickerPct;
+
+      if (diffMonthly > 0) {
+        var mitTickerVal = '+' + formatEuroMonthly(diffMonthly) + ' €';
+        var mitTickerPct = '+' + savingsPct + '%';
+        if (tickerValMit) tickerValMit.textContent = mitTickerVal;
+        if (tickerValMitDup) tickerValMitDup.textContent = mitTickerVal;
+        if (tickerPctMit) tickerPctMit.textContent = mitTickerPct;
+        if (tickerPctMitDup) tickerPctMitDup.textContent = mitTickerPct;
+        if (gainBadge) gainBadge.hidden = false;
+      } else {
+        if (tickerValMit) tickerValMit.textContent = formatEuroMonthly(monthlyMitDisplay) + ' €';
+        if (tickerValMitDup) tickerValMitDup.textContent = formatEuroMonthly(monthlyMitDisplay) + ' €';
+        if (tickerPctMit) tickerPctMit.textContent = 'PV';
+        if (tickerPctMitDup) tickerPctMitDup.textContent = 'PV';
+        if (gainBadge) gainBadge.hidden = true;
+      }
+
+      if (lossBadge) lossBadge.textContent = 'VERLUST';
 
       if (battleTotalOhne) {
         battleTotalOhne.innerHTML =
@@ -751,11 +790,14 @@
 
       calcBattle.classList.add('is-live');
       if (animate) {
-        calcBattle.classList.remove('is-pulse');
+        calcBattle.classList.remove('is-pulse', 'is-pulse-gain');
         window.requestAnimationFrame(function () {
           calcBattle.classList.add('is-pulse');
+          if (diffMonthly > 0) calcBattle.classList.add('is-pulse-gain');
         });
-        window.setTimeout(function () { calcBattle.classList.remove('is-pulse'); }, 1200);
+        window.setTimeout(function () {
+          calcBattle.classList.remove('is-pulse', 'is-pulse-gain');
+        }, 1200);
       }
     }
 

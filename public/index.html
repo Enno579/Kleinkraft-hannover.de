@@ -440,6 +440,27 @@
             <div class="calc__battle" id="calcBattle">
               <article class="calc__battle-side calc__battle-side--ohne">
                 <div class="calc__battle-fx" aria-hidden="true">
+                  <div class="calc__ticker calc__ticker--crash">
+                    <div class="calc__ticker-track" id="tickerTrackOhne">
+                      <span class="calc__ticker-item">STROM <span class="calc__ticker-arrow">↓</span> <span class="calc__ticker-pct" id="tickerPctOhne">—</span></span>
+                      <span class="calc__ticker-item">ENERGIE <span class="calc__ticker-arrow">↓</span> <span id="tickerValOhne">—</span></span>
+                      <span class="calc__ticker-item">VERSORGER <span class="calc__ticker-arrow">↓</span> CRASH</span>
+                      <span class="calc__ticker-item">STROM <span class="calc__ticker-arrow">↓</span> <span class="calc__ticker-pct" id="tickerPctOhneDup">—</span></span>
+                      <span class="calc__ticker-item">ENERGIE <span class="calc__ticker-arrow">↓</span> <span id="tickerValOhneDup">—</span></span>
+                      <span class="calc__ticker-item">VERSORGER <span class="calc__ticker-arrow">↓</span> CRASH</span>
+                    </div>
+                  </div>
+                  <svg class="calc__sparkline calc__sparkline--crash" viewBox="0 0 120 32" preserveAspectRatio="none">
+                    <polyline class="calc__sparkline-line" points="0,4 18,8 36,14 54,18 72,24 90,28 120,32"/>
+                  </svg>
+                  <span class="calc__loss-badge">VERLUST</span>
+                  <span class="calc__flash calc__flash--red"></span>
+                  <span class="calc__burn calc__burn--1">€</span>
+                  <span class="calc__burn calc__burn--2">€</span>
+                  <span class="calc__burn calc__burn--3">€</span>
+                  <span class="calc__smoke calc__smoke--1"></span>
+                  <span class="calc__smoke calc__smoke--2"></span>
+                  <span class="calc__smoke calc__smoke--3"></span>
                   <span class="calc__coin calc__coin--1">€</span>
                   <span class="calc__coin calc__coin--2">€</span>
                   <span class="calc__coin calc__coin--3">€</span>
@@ -478,6 +499,26 @@
 
               <article class="calc__battle-side calc__battle-side--mit">
                 <div class="calc__battle-fx calc__battle-fx--mit" aria-hidden="true">
+                  <div class="calc__ticker calc__ticker--gain">
+                    <div class="calc__ticker-track calc__ticker-track--gain" id="tickerTrackMit">
+                      <span class="calc__ticker-item calc__ticker-item--gain">PV <span class="calc__ticker-arrow calc__ticker-arrow--up">↑</span> <span class="calc__ticker-pct calc__ticker-pct--gain" id="tickerPctMit">—</span></span>
+                      <span class="calc__ticker-item calc__ticker-item--gain">ERSPARNIS <span class="calc__ticker-arrow calc__ticker-arrow--up">↑</span> <span id="tickerValMit">—</span></span>
+                      <span class="calc__ticker-item calc__ticker-item--gain">SOLAR <span class="calc__ticker-arrow calc__ticker-arrow--up">↑</span> BOOM</span>
+                      <span class="calc__ticker-item calc__ticker-item--gain">PV <span class="calc__ticker-arrow calc__ticker-arrow--up">↑</span> <span class="calc__ticker-pct calc__ticker-pct--gain" id="tickerPctMitDup">—</span></span>
+                      <span class="calc__ticker-item calc__ticker-item--gain">ERSPARNIS <span class="calc__ticker-arrow calc__ticker-arrow--up">↑</span> <span id="tickerValMitDup">—</span></span>
+                      <span class="calc__ticker-item calc__ticker-item--gain">SOLAR <span class="calc__ticker-arrow calc__ticker-arrow--up">↑</span> BOOM</span>
+                    </div>
+                  </div>
+                  <svg class="calc__sparkline calc__sparkline--gain" viewBox="0 0 120 32" preserveAspectRatio="none">
+                    <polyline class="calc__sparkline-line calc__sparkline-line--gain" points="0,32 18,26 36,20 54,14 72,10 90,6 120,0"/>
+                  </svg>
+                  <span class="calc__gain-badge">GEWINN</span>
+                  <span class="calc__flash calc__flash--green"></span>
+                  <span class="calc__euro-rise calc__euro-rise--1">€</span>
+                  <span class="calc__euro-rise calc__euro-rise--2">€</span>
+                  <span class="calc__euro-rise calc__euro-rise--3">€</span>
+                  <span class="calc__plus-float calc__plus-float--1">+€</span>
+                  <span class="calc__plus-float calc__plus-float--2">+€</span>
                   <span class="calc__spark calc__spark--1">+</span>
                   <span class="calc__spark calc__spark--2">€</span>
                   <span class="calc__spark calc__spark--3">+</span>
