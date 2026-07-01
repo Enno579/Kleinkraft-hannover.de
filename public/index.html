@@ -437,15 +437,31 @@
           </form>
 
           <div class="calc__results" id="calcResults" aria-live="polite">
-            <div class="calc__battle">
+            <div class="calc__battle" id="calcBattle">
               <article class="calc__battle-side calc__battle-side--ohne">
-                <p class="calc__battle-tag">DU ZAHLST</p>
-                <p class="calc__battle-label">Monatliche Zahlung ohne Anlage</p>
-                <p class="calc__battle-value-wrap">
-                  <span class="calc__monthly-value calc__battle-value" id="monthlyOhne" data-current-value="0">—</span>
-                  <span class="calc__battle-suffix">€ / Monat</span>
-                </p>
-                <p class="calc__battle-foot">Durchschnitt über 20 Jahre inkl. Strompreissteigerung</p>
+                <div class="calc__battle-fx" aria-hidden="true">
+                  <span class="calc__coin calc__coin--1">€</span>
+                  <span class="calc__coin calc__coin--2">€</span>
+                  <span class="calc__coin calc__coin--3">€</span>
+                  <span class="calc__coin calc__coin--4">↓</span>
+                </div>
+                <div class="calc__battle-inner">
+                  <p class="calc__battle-tag">Du zahlst.</p>
+                  <p class="calc__battle-label">Monatlich an den Versorger — ohne PV</p>
+                  <p class="calc__battle-value-wrap">
+                    <span class="calc__monthly-value calc__battle-value" id="monthlyOhne" data-current-value="0">—</span>
+                    <span class="calc__battle-suffix">€ / Monat</span>
+                  </p>
+                  <div class="calc__meter-track" role="presentation">
+                    <span class="calc__meter-fill calc__meter-fill--drain" id="meterOhne"></span>
+                  </div>
+                  <p class="calc__battle-total" id="battleTotalOhne">—</p>
+                  <ul class="calc__battle-points">
+                    <li>Dein Geld fließt raus — jeden Monat aufs Neue</li>
+                    <li>Preise steigen. Am Ende hast du <strong>null</strong>.</li>
+                  </ul>
+                  <p class="calc__battle-foot">Ø über 20 Jahre inkl. Strompreissteigerung</p>
+                </div>
               </article>
 
               <div class="calc__battle-vs" aria-hidden="true">
@@ -461,13 +477,29 @@
               </div>
 
               <article class="calc__battle-side calc__battle-side--mit">
-                <p class="calc__battle-tag calc__battle-tag--mit">DU INVESTIERST</p>
-                <p class="calc__battle-label">Monatliche Zahlung mit Anlage</p>
-                <p class="calc__battle-value-wrap">
-                  <span class="calc__monthly-value calc__battle-value" id="monthlyMit" data-current-value="0">—</span>
-                  <span class="calc__battle-suffix">€ / Monat</span>
-                </p>
-                <p class="calc__battle-foot" id="monthlyMitSub">Durchschnitt über 20 Jahre inkl. Strompreissteigerung</p>
+                <div class="calc__battle-fx calc__battle-fx--mit" aria-hidden="true">
+                  <span class="calc__spark calc__spark--1">+</span>
+                  <span class="calc__spark calc__spark--2">€</span>
+                  <span class="calc__spark calc__spark--3">+</span>
+                  <span class="calc__spark calc__spark--4">↑</span>
+                </div>
+                <div class="calc__battle-inner">
+                  <p class="calc__battle-tag calc__battle-tag--mit" id="battleTagMit">Du gewinnst.</p>
+                  <p class="calc__battle-label" id="battleLabelMit">Monatlich mit deiner PV-Anlage</p>
+                  <p class="calc__battle-value-wrap">
+                    <span class="calc__monthly-value calc__battle-value" id="monthlyMit" data-current-value="0">—</span>
+                    <span class="calc__battle-suffix">€ / Monat</span>
+                  </p>
+                  <div class="calc__meter-track" role="presentation">
+                    <span class="calc__meter-fill calc__meter-fill--gain" id="meterMit"></span>
+                  </div>
+                  <p class="calc__battle-total calc__battle-total--mit" id="battleTotalMit">—</p>
+                  <ul class="calc__battle-points calc__battle-points--mit">
+                    <li>Dein Geld bleibt bei dir — in deiner Technik</li>
+                    <li>Planbare Kosten statt Preisschock vom Versorger</li>
+                  </ul>
+                  <p class="calc__battle-foot" id="monthlyMitSub">Ø über 20 Jahre inkl. Strompreissteigerung</p>
+                </div>
               </article>
             </div>
 
@@ -599,130 +631,6 @@
           <a href="#kontakt" class="btn btn--accent">Jetzt kostenlos beraten lassen</a>
         </p>
       </div>
-    </section>
-
-    <!-- 6. Finanzierung -->
-    <section class="finanz" id="finanzierung" aria-labelledby="finanz-title">
-      <div class="finanz__ambient" aria-hidden="true"></div>
-      <div class="finanz__grain" aria-hidden="true"></div>
-
-      <header class="finanz__header container reveal">
-        <p class="finanz__eyebrow">Wer bekommt dein Geld?</p>
-        <h2 class="finanz__title" id="finanz-title">
-          Du zahlst sowieso.<br>
-          <span class="finanz__title-accent">Nur wofür?</span>
-        </h2>
-        <p class="finanz__punch">
-          Nach 20 Jahren ohne Anlage: <strong>0&nbsp;€ Eigenkapital.</strong> <strong>0&nbsp;€ Anlage.</strong> Nur höhere Rechnungen.
-        </p>
-        <p class="finanz__hook">
-          Jeden Monat raus — am Ende nichts. Oder: jeden Monat investieren — und am Ende gehört dir was.
-        </p>
-      </header>
-
-      <div class="finanz__arena reveal" id="finanzArena">
-        <article class="finanz__side finanz__side--rent">
-          <div class="finanz__side-fx" aria-hidden="true">
-            <span class="finanz__coin finanz__coin--1">€</span>
-            <span class="finanz__coin finanz__coin--2">€</span>
-            <span class="finanz__coin finanz__coin--3">€</span>
-            <span class="finanz__coin finanz__coin--4">€</span>
-            <span class="finanz__coin finanz__coin--5">€</span>
-          </div>
-          <div class="finanz__side-inner">
-            <div class="finanz__icon finanz__icon--rent" aria-hidden="true">
-              <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-                <path d="M6 26h10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-                <path d="M36 26h10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.35"/>
-                <path d="M18 22l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
-                <path d="M34 22l-4 4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
-                <circle cx="26" cy="30" r="9" stroke="currentColor" stroke-width="2"/>
-                <path d="M28.5 26.5H24a2.5 2.5 0 000 5h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <path d="M34 14l5-5M39 14V9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <p class="finanz__battle-label">Du zahlst.</p>
-            <p class="finanz__battle-hook">Jeden Monat. Am Ende: <strong>null.</strong></p>
-            <h3 class="finanz__side-title">Ohne Anlage · Mieten</h3>
-            <div class="finanz__meter finanz__meter--drain">
-              <div class="finanz__meter-head">
-                <span class="finanz__meter-label">Verbrannt in 20 Jahren</span>
-                <span class="finanz__meter-value" data-finanz-count="48000" data-finanz-prefix="~" data-finanz-suffix="&nbsp;€">~48.000&nbsp;€</span>
-              </div>
-              <div class="finanz__meter-track" role="presentation">
-                <span class="finanz__meter-fill finanz__meter-fill--drain"></span>
-              </div>
-              <p class="finanz__meter-tagline">Das ist verbranntes Geld. Monat für Monat.</p>
-            </div>
-            <ul class="finanz__points">
-              <li>Du zahlst — der Versorger kassiert</li>
-              <li>Preise steigen, du hast null Kontrolle</li>
-              <li>Nach 20 Jahren: 0&nbsp;€ Eigentum, nur Rechnungen</li>
-            </ul>
-            <p class="finanz__verdict finanz__verdict--rent">
-              Weiter so zahlen heißt: <strong>Geld weg</strong>, ohne dass was bei dir bleibt.
-            </p>
-          </div>
-        </article>
-
-        <div class="finanz__vs" aria-hidden="true">
-          <span class="finanz__vs-text">VS</span>
-        </div>
-
-        <article class="finanz__side finanz__side--own">
-          <div class="finanz__side-fx finanz__side-fx--own" aria-hidden="true">
-            <span class="finanz__spark finanz__spark--1">+</span>
-            <span class="finanz__spark finanz__spark--2">€</span>
-            <span class="finanz__spark finanz__spark--3">+</span>
-            <span class="finanz__spark finanz__spark--4">€</span>
-            <span class="finanz__spark finanz__spark--5">+</span>
-          </div>
-          <div class="finanz__side-inner">
-            <div class="finanz__icon finanz__icon--own" aria-hidden="true">
-              <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-                <circle cx="38" cy="13" r="7" fill="currentColor"/>
-                <path d="M38 4v3M38 19v3M47 13h-3M32 13h-3M44.5 6.5l-2 2M31.5 17.5l-2 2M44.5 19.5l-2-2M31.5 8.5l-2-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                <path d="M6 42V24l18-14 18 14v18H6z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
-                <path d="M18 42V30h16v12" stroke="currentColor" stroke-width="2.2"/>
-              </svg>
-            </div>
-            <p class="finanz__battle-label finanz__battle-label--own">Du gewinnst.</p>
-            <p class="finanz__battle-hook finanz__battle-hook--own">Jeden Monat sparst du. <strong>Dein Geld bleibt bei dir.</strong></p>
-            <h3 class="finanz__side-title">Mit Anlage · Kaufen</h3>
-            <div class="finanz__meter finanz__meter--gain">
-              <div class="finanz__meter-head">
-                <span class="finanz__meter-label">Dein Eigentum nach 20 Jahren</span>
-                <span class="finanz__meter-value" data-finanz-count="8000" data-finanz-prefix="" data-finanz-suffix="&nbsp;€+">8.000&nbsp;€+</span>
-              </div>
-              <div class="finanz__meter-track" role="presentation">
-                <span class="finanz__meter-fill finanz__meter-fill--gain"></span>
-              </div>
-              <p class="finanz__meter-tagline finanz__meter-tagline--own">Investieren statt verbrennen. Jeden Monat.</p>
-            </div>
-            <ul class="finanz__points finanz__points--own">
-              <li>Dein Geld fließt in deine Technik — nicht in fremde Taschen</li>
-              <li>Weniger Netzbezug, mehr eigener Strom vom Dach</li>
-              <li>Planbare Rate statt Preisschock vom Versorger</li>
-            </ul>
-            <p class="finanz__verdict finanz__verdict--own">
-              Nach 20 Jahren: <strong>deine PV-Anlage</strong> — und weiter Strom, der dir gehört.
-            </p>
-          </div>
-        </article>
-      </div>
-
-      <footer class="finanz__footer container reveal">
-        <p class="finanz__bridge">
-          Der Unterschied ist nicht, ob du zahlst. Der Unterschied ist, ob am Ende etwas <strong>dir gehört</strong> — oder nur deinem Stromanbieter.
-        </p>
-        <a href="#rechner" class="finanz__cta">Lass uns ehrlich rechnen →</a>
-        <p class="finanz__disclaimer">
-          Eine Finanzierung muss individuell geprüft werden. Die tatsächliche Ersparnis hängt von deinen persönlichen Voraussetzungen ab – wir rechnen das ehrlich mit dir durch.
-        </p>
-        <p class="section-cta">
-          <a href="#kontakt" class="btn btn--accent">Jetzt kostenlos beraten lassen</a>
-        </p>
-      </footer>
     </section>
 
     <!-- 7. Komponenten / Technik -->

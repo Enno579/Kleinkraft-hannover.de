@@ -615,6 +615,14 @@
     var finTotal = document.getElementById('finTotal');
     var finYears = document.getElementById('finYears');
     var calcResults = document.getElementById('calcResults');
+    var calcBattle = document.getElementById('calcBattle');
+    var meterOhne = document.getElementById('meterOhne');
+    var meterMit = document.getElementById('meterMit');
+    var battleTotalOhne = document.getElementById('battleTotalOhne');
+    var battleTotalMit = document.getElementById('battleTotalMit');
+    var battleTagMit = document.getElementById('battleTagMit');
+    var battleLabelMit = document.getElementById('battleLabelMit');
+    var monthlyMitSub = document.getElementById('monthlyMitSub');
 
     if (elMonthlyOhne) {
       if (animate) animateEuroMonthly(elMonthlyOhne, ohne.avgMonthly, 900);
@@ -707,6 +715,50 @@
       }
     }
 
+    if (calcBattle) {
+      var maxMonthly = Math.max(ohne.avgMonthly, monthlyMitDisplay, 1);
+      var ohnePct = Math.min(100, Math.round((ohne.avgMonthly / maxMonthly) * 100));
+      var mitPct = Math.min(100, Math.round((monthlyMitDisplay / maxMonthly) * 100));
+
+      if (meterOhne) meterOhne.style.width = ohnePct + '%';
+      if (meterMit) meterMit.style.width = mitPct + '%';
+
+      if (battleTotalOhne) {
+        battleTotalOhne.innerHTML =
+          '<strong>' + formatEuro(ohne.total) + '</strong> in 20 Jahren — verbrannt · am Ende <strong>null</strong>';
+      }
+
+      if (battleTotalMit) {
+        battleTotalMit.innerHTML =
+          '<strong>' + formatEuro(anlagenpreis) + '+</strong> Eigentum · <strong>deine PV-Anlage</strong> gehört dir';
+      }
+
+      if (battleTagMit) {
+        battleTagMit.textContent = diffMonthly > 0 ? 'Du gewinnst.' : 'Du investierst.';
+      }
+
+      if (battleLabelMit) {
+        battleLabelMit.textContent = finEnabled
+          ? 'Monatlich mit PV — inkl. Finanzierungsrate'
+          : 'Monatlich mit PV — Reststrom & Anlage';
+      }
+
+      if (monthlyMitSub) {
+        monthlyMitSub.textContent = finEnabled
+          ? 'Ø Reststrom + Finanzierung über 20 Jahre'
+          : 'Ø Reststrom (Anlage einmalig, siehe Details)';
+      }
+
+      calcBattle.classList.add('is-live');
+      if (animate) {
+        calcBattle.classList.remove('is-pulse');
+        window.requestAnimationFrame(function () {
+          calcBattle.classList.add('is-pulse');
+        });
+        window.setTimeout(function () { calcBattle.classList.remove('is-pulse'); }, 1200);
+      }
+    }
+
     if (calcResults && animate) {
       calcResults.classList.add('is-updated');
       window.setTimeout(function () { calcResults.classList.remove('is-updated'); }, 1000);
@@ -757,66 +809,29 @@
     });
   });
 
-  /* ---- Finanz arena: animated counters ---- */
+  /* ---- Calc battle arena: scroll-trigger ---- */
 
-  var finanzArena = document.getElementById('finanzArena');
-  if (finanzArena) {
-    var finanzCounters = finanzArena.querySelectorAll('[data-finanz-count]');
-    var finanzAnimated = false;
-
-    function formatFinanzNumber(n) {
-      return n.toLocaleString('de-DE');
-    }
-
-    function animateFinanzCounters() {
-      if (finanzAnimated) return;
-      finanzAnimated = true;
-      finanzArena.classList.add('is-animated');
-
-      finanzCounters.forEach(function (el) {
-        var target = parseInt(el.getAttribute('data-finanz-count'), 10);
-        var prefix = el.getAttribute('data-finanz-prefix') || '';
-        var suffix = el.getAttribute('data-finanz-suffix') || '';
-        if (!target || isNaN(target)) return;
-
-        var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (prefersReduced) {
-          el.innerHTML = prefix + formatFinanzNumber(target) + suffix;
-          return;
-        }
-
-        var start = 0;
-        var duration = 1800;
-        var startTime = null;
-
-        function tick(now) {
-          if (!startTime) startTime = now;
-          var progress = Math.min((now - startTime) / duration, 1);
-          var eased = 1 - Math.pow(1 - progress, 3);
-          var current = Math.round(start + (target - start) * eased);
-          el.innerHTML = prefix + formatFinanzNumber(current) + suffix;
-          if (progress < 1) requestAnimationFrame(tick);
-        }
-
-        requestAnimationFrame(tick);
-      });
+  var calcBattleEl = document.getElementById('calcBattle');
+  if (calcBattleEl) {
+    function activateCalcBattle() {
+      calcBattleEl.classList.add('is-live');
     }
 
     if ('IntersectionObserver' in window) {
-      var finanzObserver = new IntersectionObserver(
+      var calcBattleObserver = new IntersectionObserver(
         function (entries) {
           entries.forEach(function (entry) {
             if (entry.isIntersecting) {
-              animateFinanzCounters();
-              finanzObserver.unobserve(entry.target);
+              activateCalcBattle();
+              calcBattleObserver.unobserve(entry.target);
             }
           });
         },
-        { threshold: 0.25, rootMargin: '0px 0px -40px 0px' }
+        { threshold: 0.2, rootMargin: '0px 0px -40px 0px' }
       );
-      finanzObserver.observe(finanzArena);
+      calcBattleObserver.observe(calcBattleEl);
     } else {
-      animateFinanzCounters();
+      activateCalcBattle();
     }
   }
 
