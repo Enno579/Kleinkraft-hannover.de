@@ -1,7 +1,8 @@
 (function () {
   'use strict';
 
-  var GOOGLE_ADS_CONVERSION_SEND_TO = 'AW-328006841/';
+  var GOOGLE_ADS_CONVERSION_SEND_TO = 'AW-328006841/0NTKCJzv5cgCENs5s5wB';
+  var conversionFired = false;
 
   var SUCCESS_MESSAGE_HTML =
     '<div class="contact-form__feedback-icon" aria-hidden="true">' +
@@ -14,10 +15,14 @@
     '</div>';
 
   function trackGoogleAdsConversion() {
+    if (conversionFired) return;
     if (typeof gtag !== 'function') return;
-    var sendTo = GOOGLE_ADS_CONVERSION_SEND_TO;
-    if (!sendTo || sendTo.length <= 'AW-328006841/'.length) return;
-    gtag('event', 'conversion', { send_to: sendTo });
+    conversionFired = true;
+    gtag('event', 'conversion', {
+      send_to: GOOGLE_ADS_CONVERSION_SEND_TO,
+      value: 1.0,
+      currency: 'EUR',
+    });
   }
 
   function escapeHtml(value) {
