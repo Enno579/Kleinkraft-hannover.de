@@ -14,12 +14,27 @@
     '<p class="contact-form__feedback-sub">Enno Scharf wird sich direkt persönlich innerhalb der nächsten 24 Stunden bei Ihnen melden.</p>' +
     '</div>';
 
+  function pushGenerateLead() {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'generate_lead',
+      lead_event_source: 'contact_form',
+    });
+  }
+
   function trackGoogleAdsConversion() {
     if (conversionFired) return;
-    if (typeof gtag !== 'function') return;
     conversionFired = true;
+    pushGenerateLead();
+
+    var tracking = window.KLEINKRAFT_TRACKING || {};
+    if (tracking.migrateAdsConversionToGtm) {
+      return;
+    }
+
+    if (typeof gtag !== 'function') return;
     gtag('event', 'conversion', {
-      send_to: GOOGLE_ADS_CONVERSION_SEND_TO,
+      send_to: tracking.adsConversionSendTo || GOOGLE_ADS_CONVERSION_SEND_TO,
       value: 1.0,
       currency: 'EUR',
     });
