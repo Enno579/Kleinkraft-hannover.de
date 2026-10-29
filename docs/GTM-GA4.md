@@ -26,7 +26,7 @@ Accept / Ablehnen / erneutes Speichern (Widerruf): `gtag('consent','update', …
 | Event | Quelle | Wann | GTM-GA4-Event-Tag nötig? |
 | --- | --- | --- | --- |
 | `gtm.js` | `public/tracking.js` | GTM-Snippet | Nein — Container-Init. GA4 **Configuration** Tag: Trigger **Initialization – All Pages** (oder All Pages). |
-| `generate_lead` | `public/contact-form.js` | nach erfolgreichem `/api/contact` | **Ja** — GA4 Event Tag, Event-Name `generate_lead`. Parameter: `lead_event_source`, optional `lead_id`. **Keine** E-Mail, Name, Nachricht, Telefon. |
+| `generate_lead` | `public/contact-form.js` | nach erfolgreichem `/api/contact`, **einmal**, nur bei Analytics-Consent (auch wenn Marketing abgelehnt). Unabhängig von Ads-gtag / `migrateAdsConversionToGtm`. | **Ja** — GA4 Event Tag, Event-Name `generate_lead`. Parameter: `lead_event_source`, optional `lead_id`. **Keine** E-Mail, Name, Nachricht, Telefon. |
 | `scroll_depth` | `public/engagement.js` | 25/50/75/100 %, nur Analytics-Consent | **Ja**, wenn ihr die eigenen Scroll-Events in GA4 wollt. Parameter: `percent`, `scroll_depth`. |
 | `engagement_time` | `public/engagement.js` | 10/30/60 s aktiv, nur Analytics-Consent | **Ja**, analog. Parameter: `engagement_time_msec`, `engagement_time_sec`. |
 

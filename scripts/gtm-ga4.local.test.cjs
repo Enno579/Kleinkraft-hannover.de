@@ -61,6 +61,9 @@ function makeEl(tag) {
     src: '',
     async: false,
     innerHTML: '',
+    textContent: '',
+    value: undefined,
+    disabled: false,
     checked: false,
     _listeners: {},
     style: {},
@@ -80,16 +83,37 @@ function makeEl(tag) {
     setAttribute: function (n, v) {
       el.attributes[n] = String(v);
       if (n === 'id') el.id = String(v);
+      if (n === 'name') el.name = String(v);
+      if (n === 'type') el.type = String(v);
     },
     addEventListener: function (type, fn) {
       (el._listeners[type] = el._listeners[type] || []).push(fn);
     },
     appendChild: function (child) {
+      child.parentNode = el;
       el.children.push(child);
       return child;
     },
+    insertBefore: function (child, ref) {
+      child.parentNode = el;
+      const idx = el.children.indexOf(ref);
+      if (idx === -1) el.children.push(child);
+      else el.children.splice(idx, 0, child);
+      return child;
+    },
+    insertAdjacentElement: function (_pos, node) {
+      if (el.parentNode) return el.parentNode.appendChild(node);
+      return node;
+    },
     closest: function () {
       return null;
+    },
+    reset: function () {
+      walk(el, []).forEach(function (node) {
+        if (node.tagName === 'INPUT' || node.tagName === 'SELECT' || node.tagName === 'TEXTAREA') {
+          node.value = '';
+        }
+      });
     },
   };
   return el;
@@ -109,6 +133,11 @@ function matches(el, sel) {
     return el.tagName === 'SCRIPT' && String(el.src || '').indexOf(needle) !== -1;
   }
   if (sel.charAt(0) === '#') return el.id === sel.slice(1);
+  if (sel === 'button[type="submit"]') {
+    return el.tagName === 'BUTTON' && el.attributes.type === 'submit';
+  }
+  const nameMatch = /^\[name="([^"]+)"\]$/.exec(sel);
+  if (nameMatch) return el.attributes.name === nameMatch[1];
   return false;
 }
 
@@ -166,7 +195,13 @@ function createWindow() {
     document: document,
     dataLayer: [],
     KLEINKRAFT_TRACKING: undefined,
-    location: { pathname: '/' },
+    location: { pathname: '/', href: 'http://localhost/' },
+    requestAnimationFrame: function (cb) {
+      cb();
+    },
+    fetch: function () {
+      return Promise.reject(new Error('fetch not mocked'));
+    },
     pageYOffset: 0,
     innerHeight: 800,
     addEventListener: function () {},
@@ -191,6 +226,11 @@ function runScript(window, source, filename) {
     Date: Date,
     Math: Math,
     JSON: JSON,
+    Promise: Promise,
+    fetch: function () {
+      return window.fetch.apply(window, arguments);
+    },
+    gtag: window.gtag,
     encodeURIComponent: encodeURIComponent,
     decodeURIComponent: decodeURIComponent,
     setTimeout: setTimeout,
@@ -274,6 +314,25 @@ assert(
   'generate_lead has no email/name/message/phone keys',
   /event:\s*'generate_lead'/.test(contactSrc) &&
     !/payload\.(email|vorname|nachname|nachricht|telefon|phone|name)\s*=/.test(contactSrc),
+);
+const adsFnMatch = contactSrc.match(
+  /function trackGoogleAdsConversion\([^)]*\) \{[\s\S]*?\n  \}/,
+);
+assert(
+  'generate_lead is not nested in Ads conversion / gtag early-return',
+  /pushGenerateLead\(result\.data\.lead_id\)/.test(contactSrc) &&
+    adsFnMatch &&
+    adsFnMatch[0].indexOf('pushGenerateLead') === -1,
+);
+assert(
+  'contact form does not navigate or reload on success',
+  !/location\.(href|assign|replace|reload)/.test(contactSrc) &&
+    !/history\.(pushState|replaceState)/.test(contactSrc) &&
+    !/target\s*=\s*['"]_blank['"]/.test(contactSrc),
+);
+assert(
+  'index form has no action/target navigation',
+  !/<form[^>]*id="contactForm"[^>]*(action=|target=)/.test(readPublic('index.html')),
 );
 
 ['index.html', 'datenschutz.html', 'impressum.html'].forEach(function (file) {
@@ -387,6 +446,230 @@ assert(
   gtmScripts(bothWin).length === 1 && ga4GtagConfigs(bothWin.dataLayer).length === 0,
 );
 
-console.log('');
-console.log(passed + ' passed, ' + failed + ' failed');
-process.exit(failed ? 1 : 0);
+function generateLeadEvents(dataLayer) {
+  return (dataLayer || []).filter(function (item) {
+    return item && item.event === 'generate_lead';
+  });
+}
+
+function adsConversionCommands(dataLayer) {
+  return (dataLayer || []).filter(function (item) {
+    const args = item && item.length != null ? Array.prototype.slice.call(item) : null;
+    return args && args[0] === 'event' && args[1] === 'conversion';
+  });
+}
+
+function makeField(name, value) {
+  const el = makeEl('input');
+  el.setAttribute('name', name);
+  el.value = value;
+  return el;
+}
+
+function mountContactForm(window) {
+  const form = makeEl('form');
+  form.id = 'contactForm';
+  form.setAttribute('id', 'contactForm');
+  ['vorname', 'nachname', 'email'].forEach(function (name) {
+    const val = name === 'email' ? 'test@example.com' : 'Test';
+    form.appendChild(makeField(name, val));
+  });
+  form.appendChild(makeField('telefon', '0151'));
+  form.appendChild(makeField('nachricht', 'Hallo'));
+  const btn = makeEl('button');
+  btn.setAttribute('type', 'submit');
+  btn.textContent = 'Senden';
+  form.appendChild(btn);
+  window.document.body.appendChild(form);
+  return form;
+}
+
+function submitForm(form) {
+  const event = { preventDefault: function () {} };
+  (form._listeners.submit || []).forEach(function (fn) {
+    fn(event);
+  });
+}
+
+function deferredFetch(result) {
+  let resolve;
+  const promise = new Promise(function (res) {
+    resolve = res;
+  });
+  function fetchMock() {
+    return promise.then(function () {
+      return {
+        ok: result.ok !== false,
+        json: function () {
+          return Promise.resolve(result.data);
+        },
+      };
+    });
+  }
+  return { fetchMock: fetchMock, resolve: resolve };
+}
+
+function waitTicks(n) {
+  let p = Promise.resolve();
+  for (let i = 0; i < (n || 6); i++) {
+    p = p.then(function () {
+      return new Promise(function (resolve) {
+        setImmediate(resolve);
+      });
+    });
+  }
+  return p;
+}
+
+function setupFormWindow(opts) {
+  const window = createWindow();
+  window.KLEINKRAFT_TRACKING = {
+    gtmId: 'GTM-MR53Q3RK',
+    ga4Id: '',
+    adsId: 'AW-328006841',
+    adsConversionSendTo: 'AW-328006841/0NTKCJzv5cgCENs5s5wB',
+    migrateAdsConversionToGtm: !!opts.migrateAds,
+  };
+  window.KleinkraftConsent = {
+    get: function () {
+      return { analytics: !!opts.analytics, marketing: !!opts.marketing };
+    },
+  };
+  window.dataLayer = [];
+  if (opts.withGtag) {
+    window.gtag = function () {
+      window.dataLayer.push(arguments);
+    };
+  }
+  const pending = deferredFetch(
+    opts.api || { ok: true, data: { success: true, lead_id: 'lead-1' } },
+  );
+  window.fetch = pending.fetchMock;
+  const form = mountContactForm(window);
+  runScript(window, readPublic('contact-form.js'), 'contact-form.js');
+  return { window: window, form: form, resolveFetch: pending.resolve };
+}
+
+async function runFormTests() {
+  const beforeApi = setupFormWindow({ analytics: true, marketing: false, withGtag: true });
+  submitForm(beforeApi.form);
+  assert(
+    'generate_lead is not pushed before API success',
+    generateLeadEvents(beforeApi.window.dataLayer).length === 0,
+  );
+  beforeApi.resolveFetch();
+  await waitTicks(8);
+  const leadAfter = generateLeadEvents(beforeApi.window.dataLayer);
+  assert(
+    'analytics granted + marketing denied → generate_lead once',
+    leadAfter.length === 1,
+    'count=' + leadAfter.length,
+  );
+  const lead = leadAfter[0] || {};
+  assert(
+    'generate_lead payload has source and lead_id only',
+    lead.event === 'generate_lead' &&
+      lead.lead_event_source === 'contact_form' &&
+      lead.lead_id === 'lead-1' &&
+      lead.email == null &&
+      lead.vorname == null &&
+      lead.nachname == null &&
+      lead.nachricht == null &&
+      lead.telefon == null &&
+      lead.phone == null &&
+      lead.name == null,
+    JSON.stringify(lead),
+  );
+
+  const noGtag = setupFormWindow({ analytics: true, marketing: false, withGtag: false });
+  submitForm(noGtag.form);
+  noGtag.resolveFetch();
+  await waitTicks(8);
+  assert(
+    'generate_lead still fires without gtag when analytics granted',
+    generateLeadEvents(noGtag.window.dataLayer).length === 1,
+  );
+  assert(
+    'Ads conversion skipped when gtag missing',
+    adsConversionCommands(noGtag.window.dataLayer).length === 0,
+  );
+
+  const noAnalytics = setupFormWindow({ analytics: false, marketing: true, withGtag: true });
+  submitForm(noAnalytics.form);
+  noAnalytics.resolveFetch();
+  await waitTicks(8);
+  assert(
+    'analytics denied → no generate_lead',
+    generateLeadEvents(noAnalytics.window.dataLayer).length === 0,
+  );
+  assert(
+    'Ads conversion still uses gtag when present (consent mode)',
+    adsConversionCommands(noAnalytics.window.dataLayer).length === 1,
+  );
+
+  const adsOk = setupFormWindow({ analytics: true, marketing: true, withGtag: true });
+  submitForm(adsOk.form);
+  adsOk.resolveFetch();
+  await waitTicks(8);
+  assert(
+    'API success with both consents → one generate_lead',
+    generateLeadEvents(adsOk.window.dataLayer).length === 1,
+  );
+  assert(
+    'API success with gtag → one Ads conversion',
+    adsConversionCommands(adsOk.window.dataLayer).length === 1,
+  );
+
+  const migrated = setupFormWindow({
+    analytics: true,
+    marketing: true,
+    withGtag: true,
+    migrateAds: true,
+  });
+  submitForm(migrated.form);
+  migrated.resolveFetch();
+  await waitTicks(8);
+  assert(
+    'migrateAdsConversionToGtm true still pushes generate_lead',
+    generateLeadEvents(migrated.window.dataLayer).length === 1,
+  );
+  assert(
+    'migrateAdsConversionToGtm true skips Ads gtag conversion',
+    adsConversionCommands(migrated.window.dataLayer).length === 0,
+  );
+
+  const apiFail = setupFormWindow({
+    analytics: true,
+    marketing: false,
+    withGtag: true,
+    api: { ok: false, data: { success: false, error: 'nope' } },
+  });
+  submitForm(apiFail.form);
+  apiFail.resolveFetch();
+  await waitTicks(8);
+  assert(
+    'failed API does not push generate_lead',
+    generateLeadEvents(apiFail.window.dataLayer).length === 0,
+  );
+
+  const invalid = setupFormWindow({ analytics: true, marketing: false, withGtag: true });
+  invalid.form.querySelector('[name="email"]').value = '';
+  submitForm(invalid.form);
+  invalid.resolveFetch();
+  await waitTicks(8);
+  assert(
+    'invalid form does not push generate_lead',
+    generateLeadEvents(invalid.window.dataLayer).length === 0,
+  );
+
+  console.log('');
+  console.log(passed + ' passed, ' + failed + ' failed');
+  process.exit(failed ? 1 : 0);
+}
+
+runFormTests().catch(function (err) {
+  fail('form tests threw', err && err.stack ? err.stack : String(err));
+  console.log('');
+  console.log(passed + ' passed, ' + failed + ' failed');
+  process.exit(1);
+});

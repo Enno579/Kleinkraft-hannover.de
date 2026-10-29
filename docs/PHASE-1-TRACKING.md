@@ -9,7 +9,7 @@ Nicht auf Production mergen, GTM-Container nicht publishen, bis Preview geprüft
 - Google-Ads-`gtag` (`AW-328006841`) bleibt. `migrateAdsConversionToGtm: false`.
 - GTM-Loader: `gtmId: 'GTM-MR53Q3RK'`. `ga4Id` bleibt **leer** (kein direktes `gtag` `G-`). Measurement-ID **G-3TN9G4651W** (Property **Kleinkraft Hannover**) nur in GTM.
 - Attribution (UTM, GCLID, WBRAID, GBRAID) in First-Party-Cookie; Snapshot geht an `/api/contact` **nur** bei Marketing-Consent.
-- `generate_lead` im `dataLayer` nach erfolgreichem Formular (`lead_id` wenn die API sie liefert). Keine E-Mail, Name, Nachricht, Telefon im dataLayer.
+- `generate_lead` im `dataLayer` nach erfolgreichem Formular, nur bei Analytics-Consent (auch ohne Marketing). `lead_id` wenn die API sie liefert. Keine E-Mail, Name, Nachricht, Telefon im dataLayer. Unabhängig vom Ads-gtag.
 - `public/engagement.js`: `scroll_depth`, `engagement_time` **nur** bei Analytics-Consent.
 
 ## Engagement vs. GA4 Enhanced Measurement
