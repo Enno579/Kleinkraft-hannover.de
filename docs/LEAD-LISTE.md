@@ -1,6 +1,6 @@
 # Lead-Liste (Google Sheets)
 
-Stand: Branch `feat/phase-1-consent-gtm-ga4`. Code schreibt **lokal und auf Vercel** per Sheets API v4 REST + JWT (`google-auth-library`), **sobald** die Env-Variablen gesetzt sind. **Die Sheet-Konfiguration existiert noch nicht** — deshalb kein Merge nach `main`, kein Push/Deploy bis die Liste steht und geprüft ist.
+Stand: Branch `feat/gtm-ga4-via-container`. Code schreibt **lokal und auf Vercel** per Sheets API v4 REST + JWT (`google-auth-library`), **sobald** die Env-Variablen gesetzt sind. Sheet-Setup siehe unten. **Kein Production-Merge** in diesem GTM-Schritt.
 
 Tracking und Lead-Liste kommen **vor** den zwei Landingpages. Landingpages und Kampagnen-Aktivierung sind **nicht** Teil dieses Pakets.
 
@@ -195,20 +195,20 @@ Ohne diesen Schritt liefert die API 403, Mail geht trotzdem raus (`sheet_ok: fal
 4. Logs: kein `skipped_missing_config`.
 5. Bei Fehler: Freigabe Editor, Tabname `Leads`, Sheets API aktiv, Private Key mit Newlines, richtige Env-Umgebung (Preview vs Production).
 
-## GA4 / GTM — weiterhin fehlend (separat)
+## GA4 / GTM
 
-Nicht aktiv, keine IDs erfunden:
+Website lädt GTM `GTM-MR53Q3RK`. `ga4Id` im Code bleibt leer; **G-3TN9G4651W** nur im Container. Details: `docs/GTM-GA4.md`.
 
 | Stück | Status |
 | --- | --- |
-| GTM-Container-ID (`gtmId` in `public/tracking-config.js`) | **leer** — kein Loader |
-| GA4 Measurement-ID (`ga4Id`) | **leer** — kein Loader |
-| GTM Consent-Setup / GA4 Configuration Tag | **nicht angelegt** |
-| GTM-Tag `generate_lead` → GA4 | **nicht angelegt** |
+| GTM-Container-ID (`gtmId`) | `GTM-MR53Q3RK` — Loader in `tracking.js` |
+| GA4 Measurement-ID im Code (`ga4Id`) | **leer** — kein direktes gtag `G-` |
+| GTM GA4 Configuration + Event-Tags | **im Container anlegen** (nicht im Code) |
+| GTM-Tag `generate_lead` → GA4 | **noch nötig** in GTM |
 | GTM Google-Ads-Conversion-Tag | **nicht** setzen, solange `migrateAdsConversionToGtm` false |
 | Microsoft Clarity | **nein** |
 
-`generate_lead` im `dataLayer` enthält nur `event`, `lead_event_source`, optional `lead_id` — **keine** E-Mail, keinen Namen.
+`generate_lead` im `dataLayer` enthält nur `event`, `lead_event_source`, optional `lead_id` — **keine** E-Mail, keinen Namen, keine Nachricht, kein Telefon.
 
 ## Nicht in diesem Paket
 

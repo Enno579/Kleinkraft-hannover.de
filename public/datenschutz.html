@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="tracking-config.js"></script>
   <script src="consent.js"></script>
-  <!-- Google Advanced Consent Mode v2: default denied first, then Ads gtag loads. -->
-  <!-- Existing Google Ads gtag – keep until GTM conversion is tested. -->
+  <!-- Consent Mode v2 default denied (consent.js) MUST run before Ads gtag and before GTM (tracking.js). -->
+  <!-- Google Ads gtag AW-328006841 stays; GTM-MR53Q3RK loads in tracking.js. -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-328006841"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -160,12 +160,13 @@
           der Widerruf ist jederzeit mit Wirkung für die Zukunft möglich.
         </p>
         <p>
-          <strong>Google Tag Manager</strong> wird nur geladen, wenn eine Container-ID hinterlegt ist. Der Tag Manager selbst setzt in der Regel
+          <strong>Google Tag Manager</strong> (Container GTM-MR53Q3RK) wird nach den Consent-Mode-Defaults geladen. Der Tag Manager selbst setzt in der Regel
           keine eigenen Tracking-Cookies, kann aber andere Tags auslösen.
         </p>
         <p>
-          <strong>Google Analytics 4</strong> wird nur mit Einwilligung in die Statistik-Kategorie und nur bei hinterlegter Mess-ID genutzt.
+          <strong>Google Analytics 4</strong> wird über den Tag Manager (Mess-ID nur im GTM-Container) und nur mit Einwilligung in die Statistik-Kategorie genutzt.
           IP-Anonymisierung ist vorgesehen. GA4 kann Nutzungsdaten (z. B. Seitenaufrufe, Ereignisse wie eine erfolgreiche Kontaktanfrage) erfassen.
+          Lead-Ereignis ist ausschließlich <code>generate_lead</code> nach erfolgreichem Kontaktformular, nicht die GA4-Formularevents.
         </p>
         <p>
           <strong>Google Ads</strong> (Conversion-Tracking, Konto-ID AW-328006841) ist derzeit noch direkt über gtag eingebunden. Conversion-Ereignisse

@@ -41,7 +41,12 @@
     return window.KleinkraftEngagement.getSnapshot() || null;
   }
 
+  function hasAnalyticsConsent() {
+    return consentChoice().analytics;
+  }
+
   function pushGenerateLead(leadId) {
+    if (!hasAnalyticsConsent()) return;
     window.dataLayer = window.dataLayer || [];
     var payload = {
       event: 'generate_lead',
@@ -51,10 +56,9 @@
     window.dataLayer.push(payload);
   }
 
-  function trackGoogleAdsConversion(leadId) {
+  function trackGoogleAdsConversion() {
     if (conversionFired) return;
     conversionFired = true;
-    pushGenerateLead(leadId);
 
     var tracking = window.KLEINKRAFT_TRACKING || {};
     if (tracking.migrateAdsConversionToGtm) {
@@ -200,9 +204,10 @@
         })
         .then(function (result) {
           if (result.ok && result.data.success) {
+            pushGenerateLead(result.data.lead_id);
+            trackGoogleAdsConversion();
             contactForm.reset();
             showSuccessFeedback();
-            trackGoogleAdsConversion(result.data.lead_id);
           } else {
             showErrorFeedback(
               result.data.error || 'Die Anfrage konnte nicht gesendet werden. Bitte versuche es später erneut.',

@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="tracking-config.js"></script>
   <script src="consent.js"></script>
-  <!-- Google Advanced Consent Mode v2: default denied is set above, then Ads gtag loads (not Basic / not blocked until grant). -->
-  <!-- Existing Google Ads gtag – keep until GTM conversion is tested (see tracking-config.js). -->
+  <!-- Consent Mode v2 default denied (consent.js) MUST run before Ads gtag and before GTM (tracking.js). -->
+  <!-- Google Ads gtag AW-328006841 stays; GTM-MR53Q3RK loads in tracking.js. GA4 G- is not loaded here. -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-328006841"></script>
   <script>
     window.dataLayer = window.dataLayer || [];

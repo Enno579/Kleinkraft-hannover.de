@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test:gtm-ga4": "node scripts/gtm-ga4.local.test.cjs"
   },
   "dependencies": {
     "google-auth-library": "^11.3.1",
