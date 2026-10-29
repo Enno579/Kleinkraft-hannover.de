@@ -335,7 +335,42 @@ assert(
   !/<form[^>]*id="contactForm"[^>]*(action=|target=)/.test(readPublic('index.html')),
 );
 
-['index.html', 'datenschutz.html', 'impressum.html'].forEach(function (file) {
+['index.html', 'anker-dachanlage.html', 'photovoltaik-speicher.html'].forEach(function (file) {
+  const html = readPublic(file);
+  assert(
+    file + ' title/description without Balkonkraftwerk or Steckersolar',
+    !/Balkonkraftwerk|Steckersolar|Balkonkraft/i.test(html.match(/<title>[^<]+/)[0] + (html.match(/name="description" content="[^"]+"/) || [''])[0]),
+  );
+  assert(
+    file + ' requires telefon in markup',
+    /name="telefon"[^>]*required|required[^>]*name="telefon"/.test(html) && /Telefon/.test(html),
+  );
+  assert(
+    file + ' has product_line field',
+    /name="product_line"/.test(html),
+  );
+});
+
+assert(
+  'canonical homepage',
+  /rel="canonical" href="https:\/\/www\.kleinkraft-hannover\.de\/"/.test(readPublic('index.html')),
+);
+assert(
+  'canonical anker page',
+  /rel="canonical" href="https:\/\/www\.kleinkraft-hannover\.de\/anker-dachanlage"/.test(
+    readPublic('anker-dachanlage.html'),
+  ),
+);
+assert(
+  'canonical classic page',
+  /rel="canonical" href="https:\/\/www\.kleinkraft-hannover\.de\/photovoltaik-speicher"/.test(
+    readPublic('photovoltaik-speicher.html'),
+  ),
+);
+assert('sitemap lists both offers', /anker-dachanlage/.test(readPublic('sitemap.xml')) && /photovoltaik-speicher/.test(readPublic('sitemap.xml')));
+assert('robots.txt has sitemap', /Sitemap: https:\/\/www\.kleinkraft-hannover\.de\/sitemap.xml/.test(readPublic('robots.txt')));
+
+['index.html', 'datenschutz.html', 'impressum.html', 'anker-dachanlage.html', 'photovoltaik-speicher.html'].forEach(function (file) {
   const html = readPublic(file);
   const order = scriptOrder(html);
   const iConfig = indexOfSrc(order, 'tracking-config.js');
@@ -474,7 +509,8 @@ function mountContactForm(window) {
     const val = name === 'email' ? 'test@example.com' : 'Test';
     form.appendChild(makeField(name, val));
   });
-  form.appendChild(makeField('telefon', '0151'));
+  form.appendChild(makeField('telefon', '015678444101'));
+  form.appendChild(makeField('product_line', 'anker_dachanlage'));
   form.appendChild(makeField('nachricht', 'Hallo'));
   const btn = makeEl('button');
   btn.setAttribute('type', 'submit');
@@ -544,7 +580,13 @@ function setupFormWindow(opts) {
   const pending = deferredFetch(
     opts.api || { ok: true, data: { success: true, lead_id: 'lead-1' } },
   );
-  window.fetch = pending.fetchMock;
+  window.__fetchCalls = 0;
+  window.__lastFetchBody = null;
+  window.fetch = function () {
+    window.__fetchCalls += 1;
+    window.__lastFetchBody = arguments[1] && arguments[1].body;
+    return pending.fetchMock.apply(null, arguments);
+  };
   const form = mountContactForm(window);
   runScript(window, readPublic('contact-form.js'), 'contact-form.js');
   return { window: window, form: form, resolveFetch: pending.resolve };
@@ -660,6 +702,43 @@ async function runFormTests() {
   assert(
     'invalid form does not push generate_lead',
     generateLeadEvents(invalid.window.dataLayer).length === 0,
+  );
+
+  const noPhone = setupFormWindow({ analytics: true, marketing: false, withGtag: true });
+  noPhone.form.querySelector('[name="telefon"]').value = '';
+  submitForm(noPhone.form);
+  assert('missing phone does not call /api/contact', noPhone.window.__fetchCalls === 0);
+  assert(
+    'missing phone does not push generate_lead',
+    generateLeadEvents(noPhone.window.dataLayer).length === 0,
+  );
+
+  const badPhone = setupFormWindow({ analytics: true, marketing: false, withGtag: true });
+  badPhone.form.querySelector('[name="telefon"]').value = 'abc';
+  submitForm(badPhone.form);
+  assert('invalid phone does not call /api/contact', badPhone.window.__fetchCalls === 0);
+
+  const badLine = setupFormWindow({ analytics: true, marketing: false, withGtag: true });
+  badLine.form.querySelector('[name="product_line"]').value = 'anker_solix';
+  submitForm(badLine.form);
+  assert('invalid product_line does not call /api/contact', badLine.window.__fetchCalls === 0);
+
+  const intlOk = setupFormWindow({ analytics: true, marketing: false, withGtag: true });
+  intlOk.form.querySelector('[name="telefon"]').value = '+49 156 78444101';
+  intlOk.form.querySelector('[name="product_line"]').value = 'klassische_photovoltaik';
+  submitForm(intlOk.form);
+  assert('valid international phone starts API call', intlOk.window.__fetchCalls === 1);
+  var posted = JSON.parse(intlOk.window.__lastFetchBody || '{}');
+  assert(
+    'POST body keeps phone and product_line',
+    posted.telefon === '+49 156 78444101' && posted.product_line === 'klassische_photovoltaik',
+    JSON.stringify(posted),
+  );
+  intlOk.resolveFetch();
+  await waitTicks(8);
+  assert(
+    'valid phone+product_line still generate_lead once',
+    generateLeadEvents(intlOk.window.dataLayer).length === 1,
   );
 
   console.log('');

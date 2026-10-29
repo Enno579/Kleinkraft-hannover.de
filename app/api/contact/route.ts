@@ -8,21 +8,21 @@ import {
   sanitizeEngagement,
   type AppendLeadResult,
 } from '../../../lib/leads/sheet';
-import { DEFAULT_LEAD_STATUS } from '../../../lib/leads/status';
+import { isValidPhone } from '../../../lib/leads/phone';
+import { DEFAULT_LEAD_STATUS, PRODUCT_LINES } from '../../../lib/leads/status';
 
 const TO_EMAIL = 'Ennosch93@gmail.com';
 const DEFAULT_FROM = 'Kleinkraft Hannover <kontakt@kleinkraft-hannover.de>';
 
 const WOHNSITUATION_LABELS: Record<string, string> = {
-  mieter: 'Mieter',
-  eigentuemer: 'Eigentümer',
+  eigentuemer: 'Hauseigentümer',
+  unklar: 'Noch unklar',
 };
 
 const MONTAGEORT_LABELS: Record<string, string> = {
-  balkon: 'Balkon',
-  dach: 'Dach',
-  garage: 'Garage',
-  garten: 'Garten',
+  dach: 'Hausdach',
+  garage: 'Garagendach',
+  beides: 'Haus- und Garagendach',
   unklar: 'Noch unklar',
 };
 
@@ -83,7 +83,12 @@ function buildEmailHtml(
     ['Wohnsituation', labelFor(data.wohnsituation, WOHNSITUATION_LABELS)],
     ['Montageort', labelFor(data.montageort, MONTAGEORT_LABELS)],
     ['Interesse an Finanzierung', labelFor(data.finanzierung_interesse, FINANZIERUNG_LABELS)],
-    ['Angebotslinie', data.product_line || '–'],
+    [
+      'Angebotslinie',
+      data.product_line && data.product_line in PRODUCT_LINES
+        ? `${data.product_line} (${PRODUCT_LINES[data.product_line as keyof typeof PRODUCT_LINES]})`
+        : data.product_line || '–',
+    ],
     ['Landingpage', data.landing_page || '–'],
     ['Nachricht', data.nachricht || '–'],
   ];
@@ -138,10 +143,12 @@ export async function POST(request: Request) {
   const vorname = payload.vorname?.trim() ?? '';
   const nachname = payload.nachname?.trim() ?? '';
   const email = payload.email?.trim() ?? '';
+  const telefon = payload.telefon?.trim() ?? '';
+  const productLine = allowedProductLine(payload.product_line);
 
-  if (!vorname || !nachname || !email) {
+  if (!vorname || !nachname || !email || !telefon) {
     return NextResponse.json(
-      { error: 'Bitte Vorname, Nachname und E-Mail ausfüllen.' },
+      { error: 'Bitte Vorname, Nachname, E-Mail und Telefon ausfüllen.' },
       { status: 400 },
     );
   }
@@ -153,11 +160,27 @@ export async function POST(request: Request) {
     );
   }
 
+  if (!isValidPhone(telefon)) {
+    return NextResponse.json(
+      {
+        error:
+          'Bitte eine erreichbare Telefonnummer angeben (international, z. B. +49 156 78444101 oder 0156 78444101).',
+      },
+      { status: 400 },
+    );
+  }
+
+  if (!productLine) {
+    return NextResponse.json(
+      { error: 'Bitte eine Angebotslinie wählen (Anker-Dachanlage oder Klassische Photovoltaik).' },
+      { status: 400 },
+    );
+  }
+
   const leadId = randomUUID();
   const createdAt = new Date().toISOString();
   const marketingConsent = payload.marketing_consent === true;
   const analyticsConsent = payload.analytics_consent === true;
-  const productLine = allowedProductLine(payload.product_line);
   const landingPage = payload.landing_page ? String(payload.landing_page).trim().slice(0, 500) : '';
   const attribution = sanitizeAttribution(payload.attribution, marketingConsent);
   const engagement = sanitizeEngagement(payload.engagement, analyticsConsent);
@@ -176,7 +199,7 @@ export async function POST(request: Request) {
       vorname,
       nachname,
       email,
-      telefon: payload.telefon?.trim(),
+      telefon,
       jahresverbrauch: payload.jahresverbrauch?.trim(),
       wohnsituation: payload.wohnsituation,
       montageort: payload.montageort,
@@ -209,7 +232,7 @@ export async function POST(request: Request) {
       vorname,
       nachname,
       email,
-      telefon: payload.telefon?.trim(),
+      telefon,
       jahresverbrauch: payload.jahresverbrauch?.trim(),
       wohnsituation: payload.wohnsituation,
       montageort: payload.montageort,

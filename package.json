@@ -9,7 +9,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test:gtm-ga4": "node scripts/gtm-ga4.local.test.cjs"
+    "test:gtm-ga4": "node scripts/gtm-ga4.local.test.cjs",
+    "test:contact": "node tests/contact-validation.node.test.cjs",
+    "test": "npm run test:gtm-ga4 && npm run test:contact"
   },
   "dependencies": {
     "google-auth-library": "^11.3.1",
