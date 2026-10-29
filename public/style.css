@@ -1,7 +1,7 @@
 /* ============================================
    ✅ RICHTIGE DATEI – HOCHLADEN AUF kleinkraft-hannover.de
    Datei: balkonkraftwerk/style.css
-   Stand: 30.06.2026 – Mobile: Text + TÜV, Hannover ohne Bilder
+   Stand: 29.10.2026 – Marketing ohne Fotos
    ============================================
    Kleine Solarlösungen – Premium Landing
    ============================================ */
@@ -4280,6 +4280,51 @@ button, input, select, textarea {
   .calc__submit:hover {
     transform: none;
   }
+}
+
+.hero--plain .hero__bg {
+  background:
+    radial-gradient(ellipse 80% 55% at 78% 8%, rgba(232, 184, 10, 0.16) 0%, transparent 58%),
+    linear-gradient(180deg, #071525 0%, #0c2342 52%, #12325c 100%);
+}
+
+.hero--plain .hero__overlay {
+  background:
+    linear-gradient(
+      to right,
+      rgba(7, 21, 37, 0.35) 0%,
+      rgba(7, 21, 37, 0.12) 70%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to top,
+      rgba(7, 21, 37, 0.45) 0%,
+      rgba(7, 21, 37, 0.12) 55%,
+      transparent 100%
+    );
+}
+
+.enno-trust--text {
+  --trust-panel-h: none;
+}
+
+.enno-trust--text .enno-trust__panel {
+  max-height: none;
+  overflow: visible;
+}
+
+.enno-trust--text .enno-trust__grid {
+  grid-template-columns: 1fr;
+  min-height: 0;
+  max-height: none;
+}
+
+.enno-trust--text .enno-trust__col {
+  padding: clamp(1.5rem, 3vw, 2.4rem);
+}
+
+.enno-trust--text .enno-trust__col:not(:first-child)::before {
+  display: none;
 }
 
 /* ---- Repositioning: offer pages, Zählerschrank, form errors ---- */
