@@ -7,7 +7,7 @@ Nicht auf Production mergen, GTM-Container nicht publishen, bis Preview geprüft
 
 - Consent-Banner mit Google Consent Mode v2 (`ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage`) — Defaults **denied** in `consent.js` **vor** Ads-gtag und **vor** GTM (`tracking.js`).
 - Google-Ads-`gtag` (`AW-328006841`) bleibt. `migrateAdsConversionToGtm: false`.
-- GTM-Loader: `gtmId: 'GTM-MR5303RK'`. `ga4Id` bleibt **leer** (kein direktes `gtag` `G-`). Measurement-ID **G-3TN9G4651W** nur in GTM.
+- GTM-Loader: `gtmId: 'GTM-MR5303RK'`. `ga4Id` bleibt **leer** (kein direktes `gtag` `G-`). Measurement-ID **G-3TN9G4651W** (Property **Kleinkraft Hannover**) nur in GTM.
 - Attribution (UTM, GCLID, WBRAID, GBRAID) in First-Party-Cookie; Snapshot geht an `/api/contact` **nur** bei Marketing-Consent.
 - `generate_lead` im `dataLayer` nach erfolgreichem Formular (`lead_id` wenn die API sie liefert). Keine E-Mail, Name, Nachricht, Telefon im dataLayer.
 - `public/engagement.js`: `scroll_depth`, `engagement_time` **nur** bei Analytics-Consent.

@@ -241,7 +241,31 @@ assert(
   'ga4Id line is not a G- measurement id',
   !/ga4Id:\s*'G-/.test(configSrc),
 );
-assert('G-D7QK7952J4 is not used', configSrc.indexOf('G-D7QK7952J4') === -1);
+const FORBIDDEN_GA4 = 'G-D7QK7952J4';
+function walkFiles(dir, acc) {
+  fs.readdirSync(dir, { withFileTypes: true }).forEach(function (ent) {
+    if (ent.name === 'node_modules' || ent.name === '.next' || ent.name === '.git' || ent.name === 'tests') {
+      return;
+    }
+    const full = path.join(dir, ent.name);
+    if (ent.isDirectory()) walkFiles(full, acc);
+    else acc.push(full);
+  });
+  return acc;
+}
+const oldIdHits = [];
+walkFiles(ROOT, []).forEach(function (file) {
+  if (path.relative(ROOT, file) === path.join('scripts', 'gtm-ga4.local.test.cjs')) return;
+  const text = fs.readFileSync(file, 'utf8');
+  if (text.indexOf(FORBIDDEN_GA4) === -1) return;
+  String(text)
+    .split(/\n/)
+    .forEach(function (line, i) {
+      if (line.indexOf(FORBIDDEN_GA4) === -1) return;
+      oldIdHits.push(path.relative(ROOT, file) + ':' + (i + 1));
+    });
+});
+assert('old GA4 G-D7QK7952J4 is not mapped anywhere', oldIdHits.length === 0, oldIdHits.join(', '));
 assert('migrateAdsConversionToGtm is false', /migrateAdsConversionToGtm:\s*false/.test(configSrc));
 assert('Ads id stays AW-328006841', /adsId:\s*'AW-328006841'/.test(configSrc));
 

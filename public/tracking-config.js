@@ -1,6 +1,7 @@
 /**
  * Kleinkraft tracking configuration.
  *
+ * Property Kleinkraft Hannover (www.kleinkraft-hannover.de):
  * GTM container GTM-MR5303RK loads via public/tracking.js (after Consent Mode
  * v2 defaults in consent.js). GA4 Measurement ID G-3TN9G4651W lives in GTM
  * only — ga4Id MUST stay empty so tracking.js does NOT load gtag G- directly.

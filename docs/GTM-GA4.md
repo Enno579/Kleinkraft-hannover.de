@@ -1,7 +1,13 @@
 # GTM + GA4 (Container-Pfad)
 
-Branch: `feat/gtm-ga4-via-container`  
-GA4 Measurement-ID **G-3TN9G4651W** nur im GTM-Container, nicht als `ga4Id` im Code.  
+Branch: `feat/gtm-ga4-via-container`
+
+Nur Property **Kleinkraft Hannover** für **www.kleinkraft-hannover.de**:
+- GTM: **GTM-MR5303RK**
+- GA4: **G-3TN9G4651W** (nur im GTM-Container, `ga4Id` im Code bleibt leer)
+
+Keine andere GA4-Property / Measurement-ID (insbesondere nicht die Dezember-Start-Property einer anderen Domain).
+
 Ads-gtag **AW-328006841** bleibt. `migrateAdsConversionToGtm: false`.
 
 ## Lade-Reihenfolge (Consent vor GTM)
