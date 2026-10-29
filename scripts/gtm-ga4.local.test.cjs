@@ -370,6 +370,67 @@ assert(
 assert('sitemap lists both offers', /anker-dachanlage/.test(readPublic('sitemap.xml')) && /photovoltaik-speicher/.test(readPublic('sitemap.xml')));
 assert('robots.txt has sitemap', /Sitemap: https:\/\/www\.kleinkraft-hannover\.de\/sitemap.xml/.test(readPublic('robots.txt')));
 
+assert(
+  'anker landing has no link to photovoltaik-speicher',
+  !/href=["']\/photovoltaik-speicher/.test(readPublic('anker-dachanlage.html')),
+);
+assert(
+  'pv landing has no link to anker-dachanlage',
+  !/href=["']\/anker-dachanlage/.test(readPublic('photovoltaik-speicher.html')),
+);
+assert(
+  'homepage has no offer-landing hrefs',
+  !/href=["']\/anker-dachanlage/.test(readPublic('index.html')) &&
+    !/href=["']\/photovoltaik-speicher/.test(readPublic('index.html')),
+);
+assert(
+  'legal pages have no offer-landing hrefs',
+  !/href=["']\/anker-dachanlage/.test(readPublic('impressum.html')) &&
+    !/href=["']\/photovoltaik-speicher/.test(readPublic('impressum.html')) &&
+    !/href=["']\/anker-dachanlage/.test(readPublic('datenschutz.html')) &&
+    !/href=["']\/photovoltaik-speicher/.test(readPublic('datenschutz.html')),
+);
+assert(
+  'pv H1 is visitor-friendly without Klassische PV-Anlage',
+  /<h1[^>]*>Photovoltaik mit Speicher für dein Zuhause in Hannover<\/h1>/.test(
+    readPublic('photovoltaik-speicher.html'),
+  ) && !/Klassische PV-Anlage/.test(readPublic('photovoltaik-speicher.html')),
+);
+assert(
+  'anker H1 is independent Anker SOLIX headline',
+  /<h1[^>]*>Anker SOLIX mit Speicher für dein Zuhause in Hannover<\/h1>/.test(
+    readPublic('anker-dachanlage.html'),
+  ),
+);
+assert(
+  'both landings use Hannover hero photo',
+  /src="hannover\.jpg"/.test(readPublic('anker-dachanlage.html')) &&
+    /src="hannover\.jpg"/.test(readPublic('photovoltaik-speicher.html')) &&
+    /src="hannover\.jpg"/.test(readPublic('index.html')),
+);
+assert(
+  'anker form stays anker_dachanlage',
+  /data-product-line="anker_dachanlage"/.test(readPublic('anker-dachanlage.html')) &&
+    /name="product_line"[^>]*value="anker_dachanlage"/.test(readPublic('anker-dachanlage.html')),
+);
+assert(
+  'pv form stays klassische_photovoltaik internally',
+  /data-product-line="klassische_photovoltaik"/.test(readPublic('photovoltaik-speicher.html')) &&
+    /name="product_line"[^>]*value="klassische_photovoltaik"/.test(readPublic('photovoltaik-speicher.html')),
+);
+assert(
+  'anker logo stays on anker landing',
+  /class="nav__logo"[^>]*href="\/anker-dachanlage"|href="\/anker-dachanlage"[^>]*class="nav__logo"/.test(
+    readPublic('anker-dachanlage.html'),
+  ),
+);
+assert(
+  'pv logo stays on pv landing',
+  /class="nav__logo"[^>]*href="\/photovoltaik-speicher"|href="\/photovoltaik-speicher"[^>]*class="nav__logo"/.test(
+    readPublic('photovoltaik-speicher.html'),
+  ),
+);
+
 ['index.html', 'datenschutz.html', 'impressum.html', 'anker-dachanlage.html', 'photovoltaik-speicher.html'].forEach(function (file) {
   const html = readPublic(file);
   const order = scriptOrder(html);

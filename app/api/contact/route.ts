@@ -172,7 +172,7 @@ export async function POST(request: Request) {
 
   if (!productLine) {
     return NextResponse.json(
-      { error: 'Bitte eine Angebotslinie wählen (Anker-Dachanlage oder Klassische Photovoltaik).' },
+      { error: 'Bitte ein Anliegen wählen (Anker SOLIX auf dem Hausdach oder Photovoltaik mit Speicher).' },
       { status: 400 },
     );
   }

@@ -35,7 +35,7 @@ assert('old pv_classic not in PRODUCT_LINES', !/pv_classic/.test(status));
 assert('allowedProductLine uses new values', /anker_dachanlage/.test(sheet) && /klassische_photovoltaik/.test(sheet));
 assert('sheet columns still start with lead_id and include telefon then later product_line', /'lead_id'[\s\S]*'telefon'[\s\S]*'product_line'[\s\S]*'offer_label'/.test(sheet));
 assert('route requires phone', /isValidPhone/.test(route) && /Telefon/.test(route));
-assert('route requires product_line', /Anker-Dachanlage oder Klassische Photovoltaik/.test(route));
+assert('route requires product_line', /Anker SOLIX auf dem Hausdach oder Photovoltaik mit Speicher/.test(route));
 assert('next config rewrites offer pages', /anker-dachanlage\.html/.test(cfg) && /photovoltaik-speicher\.html/.test(cfg));
 assert('preview X-Robots-Tag noindex', /VERCEL_ENV === 'preview'/.test(cfg) && /noindex/.test(cfg));
 assert('permanent redirects for html slugs', /permanent: true/.test(cfg) && /anker-dachanlage.html/.test(cfg));

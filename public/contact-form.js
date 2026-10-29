@@ -251,7 +251,7 @@
       if (!productLine) {
         setFieldError(
           'product_line',
-          'Bitte wählen, welches Angebot Sie betrifft: Anker-Dachanlage oder Klassische Photovoltaik.',
+          'Bitte wählen, welches Anliegen Sie betrifft: Anker SOLIX auf dem Hausdach oder Photovoltaik mit Speicher.',
         );
         hasError = true;
       }
