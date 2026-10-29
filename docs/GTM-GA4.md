@@ -3,7 +3,7 @@
 Branch: `feat/gtm-ga4-via-container`
 
 Nur Property **Kleinkraft Hannover** für **www.kleinkraft-hannover.de**:
-- GTM: **GTM-MR5303RK**
+- GTM: **GTM-MR53Q3RK**
 - GA4: **G-3TN9G4651W** (nur im GTM-Container, `ga4Id` im Code bleibt leer)
 
 Keine andere GA4-Property / Measurement-ID (insbesondere nicht die Dezember-Start-Property einer anderen Domain).
@@ -17,7 +17,7 @@ In `public/index.html`, `datenschutz.html`, `impressum.html`:
 1. `tracking-config.js`
 2. `consent.js` — Consent Mode v2 **default denied** (`ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage`)
 3. Google Ads `gtag/js?id=AW-328006841` + `gtag('config','AW-328006841')`
-4. (Body, defer) `tracking.js` — lädt `gtm.js?id=GTM-MR5303RK` und pusht `gtm.js`
+4. (Body, defer) `tracking.js` — lädt `gtm.js?id=GTM-MR53Q3RK` und pusht `gtm.js`
 
 Accept / Ablehnen / erneutes Speichern (Widerruf): `gtag('consent','update', …)` in `consent.js`.
 

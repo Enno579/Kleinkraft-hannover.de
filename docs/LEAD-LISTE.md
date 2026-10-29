@@ -197,11 +197,11 @@ Ohne diesen Schritt liefert die API 403, Mail geht trotzdem raus (`sheet_ok: fal
 
 ## GA4 / GTM
 
-Website lädt GTM `GTM-MR5303RK`. `ga4Id` im Code bleibt leer; **G-3TN9G4651W** nur im Container. Details: `docs/GTM-GA4.md`.
+Website lädt GTM `GTM-MR53Q3RK`. `ga4Id` im Code bleibt leer; **G-3TN9G4651W** nur im Container. Details: `docs/GTM-GA4.md`.
 
 | Stück | Status |
 | --- | --- |
-| GTM-Container-ID (`gtmId`) | `GTM-MR5303RK` — Loader in `tracking.js` |
+| GTM-Container-ID (`gtmId`) | `GTM-MR53Q3RK` — Loader in `tracking.js` |
 | GA4 Measurement-ID im Code (`ga4Id`) | **leer** — kein direktes gtag `G-` |
 | GTM GA4 Configuration + Event-Tags | **im Container anlegen** (nicht im Code) |
 | GTM-Tag `generate_lead` → GA4 | **noch nötig** in GTM |

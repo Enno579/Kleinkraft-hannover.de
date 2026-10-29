@@ -231,8 +231,8 @@ function consentCommands(dataLayer, command) {
 
 const configSrc = readPublic('tracking-config.js');
 assert(
-  'gtmId is GTM-MR5303RK',
-  /gtmId:\s*'GTM-MR5303RK'/.test(configSrc),
+  'gtmId is GTM-MR53Q3RK',
+  /gtmId:\s*'GTM-MR53Q3RK'/.test(configSrc),
   configSrc.match(/gtmId:\s*'[^']*'/)[0],
 );
 assert('ga4Id is empty string', /ga4Id:\s*''/.test(configSrc));
@@ -334,8 +334,8 @@ runScript(win, readPublic('tracking.js'), 'tracking.js');
 const gtm = gtmScripts(win);
 assert('exactly one GTM script', gtm.length === 1, 'count=' + gtm.length);
 assert(
-  'GTM script id is GTM-MR5303RK',
-  gtm[0] && gtm[0].src.indexOf('id=GTM-MR5303RK') !== -1,
+  'GTM script id is GTM-MR53Q3RK',
+  gtm[0] && gtm[0].src.indexOf('id=GTM-MR53Q3RK') !== -1,
   gtm[0] && gtm[0].src,
 );
 assert(
