@@ -36,7 +36,8 @@ assert('allowedProductLine uses new values', /anker_dachanlage/.test(sheet) && /
 assert('sheet columns still start with lead_id and include telefon then later product_line', /'lead_id'[\s\S]*'telefon'[\s\S]*'product_line'[\s\S]*'offer_label'/.test(sheet));
 assert('route requires phone', /isValidPhone/.test(route) && /Telefon/.test(route));
 assert('route requires product_line', /Anker SOLIX auf dem Hausdach oder Photovoltaik mit Speicher/.test(route));
-assert('next config rewrites offer pages', /anker-dachanlage\.html/.test(cfg) && /photovoltaik-speicher\.html/.test(cfg));
+assert('next config rewrites PV and legal pages', /photovoltaik-speicher\.html/.test(cfg) && /impressum\.html/.test(cfg));
+assert('anker slug permanently redirects to homepage', /source: '\/anker-dachanlage'/.test(cfg) && /destination: '\/'/.test(cfg));
 assert('homepage rewrite is beforeFiles not a client redirect', /beforeFiles/.test(cfg) && /source: '\/'/.test(cfg));
 assert('no App Router redirect to /index.html', !fs.existsSync(path.join(ROOT, 'app/page.tsx')) || !/redirect\(\s*['"]\/index\.html['"]/.test(read('app/page.tsx')));
 assert('preview X-Robots-Tag noindex', /VERCEL_ENV === 'preview'/.test(cfg) && /noindex/.test(cfg));

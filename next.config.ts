@@ -10,7 +10,6 @@ const nextConfig: NextConfig = {
       // would then fight the 308 below and loop.
       beforeFiles: [{ source: '/', destination: '/index.html' }],
       afterFiles: [
-        { source: '/anker-dachanlage', destination: '/anker-dachanlage.html' },
         { source: '/photovoltaik-speicher', destination: '/photovoltaik-speicher.html' },
         { source: '/datenschutz', destination: '/datenschutz.html' },
         { source: '/impressum', destination: '/impressum.html' },
@@ -20,7 +19,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: '/index.html', destination: '/', permanent: true },
-      { source: '/anker-dachanlage.html', destination: '/anker-dachanlage', permanent: true },
+      { source: '/anker-dachanlage', destination: '/', permanent: true },
+      { source: '/anker-dachanlage.html', destination: '/', permanent: true },
       { source: '/photovoltaik-speicher.html', destination: '/photovoltaik-speicher', permanent: true },
       { source: '/datenschutz.html', destination: '/datenschutz', permanent: true },
       { source: '/impressum.html', destination: '/impressum', permanent: true },

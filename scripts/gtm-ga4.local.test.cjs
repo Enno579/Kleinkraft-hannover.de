@@ -356,10 +356,9 @@ assert(
   /rel="canonical" href="https:\/\/www\.kleinkraft-hannover\.de\/"/.test(readPublic('index.html')),
 );
 assert(
-  'canonical anker page',
-  /rel="canonical" href="https:\/\/www\.kleinkraft-hannover\.de\/anker-dachanlage"/.test(
-    readPublic('anker-dachanlage.html'),
-  ),
+  'canonical anker page is homepage',
+  /rel="canonical" href="https:\/\/www\.kleinkraft-hannover\.de\/"/.test(readPublic('anker-dachanlage.html')) &&
+    /rel="canonical" href="https:\/\/www\.kleinkraft-hannover\.de\/"/.test(readPublic('index.html')),
 );
 assert(
   'canonical classic page',
@@ -367,12 +366,18 @@ assert(
     readPublic('photovoltaik-speicher.html'),
   ),
 );
-assert('sitemap lists both offers', /anker-dachanlage/.test(readPublic('sitemap.xml')) && /photovoltaik-speicher/.test(readPublic('sitemap.xml')));
+assert(
+  'sitemap lists homepage and PV, not a second Anker URL',
+  /kleinkraft-hannover\.de\/</.test(readPublic('sitemap.xml')) &&
+    /photovoltaik-speicher/.test(readPublic('sitemap.xml')) &&
+    !/anker-dachanlage/.test(readPublic('sitemap.xml')),
+);
 assert('robots.txt has sitemap', /Sitemap: https:\/\/www\.kleinkraft-hannover\.de\/sitemap.xml/.test(readPublic('robots.txt')));
 
 assert(
   'anker landing has no link to photovoltaik-speicher',
-  !/href=["']\/photovoltaik-speicher/.test(readPublic('anker-dachanlage.html')),
+  !/href=["']\/photovoltaik-speicher/.test(readPublic('anker-dachanlage.html')) &&
+    !/href=["']\/photovoltaik-speicher/.test(readPublic('index.html')),
 );
 assert(
   'pv landing has no link to anker-dachanlage',
@@ -399,8 +404,11 @@ assert(
 assert(
   'anker H1 is independent Anker SOLIX headline',
   /<h1[^>]*>Anker SOLIX mit Speicher für dein Zuhause in Hannover<\/h1>/.test(
-    readPublic('anker-dachanlage.html'),
-  ),
+    readPublic('index.html'),
+  ) &&
+    /<h1[^>]*>Anker SOLIX mit Speicher für dein Zuhause in Hannover<\/h1>/.test(
+      readPublic('anker-dachanlage.html'),
+    ),
 );
 assert(
   'both landings use Hannover hero photo',
@@ -410,7 +418,9 @@ assert(
 );
 assert(
   'anker form stays anker_dachanlage',
-  /data-product-line="anker_dachanlage"/.test(readPublic('anker-dachanlage.html')) &&
+  /data-product-line="anker_dachanlage"/.test(readPublic('index.html')) &&
+    /name="product_line"[^>]*value="anker_dachanlage"/.test(readPublic('index.html')) &&
+    /data-product-line="anker_dachanlage"/.test(readPublic('anker-dachanlage.html')) &&
     /name="product_line"[^>]*value="anker_dachanlage"/.test(readPublic('anker-dachanlage.html')),
 );
 assert(
@@ -419,10 +429,9 @@ assert(
     /name="product_line"[^>]*value="klassische_photovoltaik"/.test(readPublic('photovoltaik-speicher.html')),
 );
 assert(
-  'anker logo stays on anker landing',
-  /class="nav__logo"[^>]*href="\/anker-dachanlage"|href="\/anker-dachanlage"[^>]*class="nav__logo"/.test(
-    readPublic('anker-dachanlage.html'),
-  ),
+  'anker logo stays on homepage',
+  /class="nav__logo"[^>]*href="\/"|href="\/"[^>]*class="nav__logo"/.test(readPublic('index.html')) &&
+    /class="nav__logo"[^>]*href="\/"|href="\/"[^>]*class="nav__logo"/.test(readPublic('anker-dachanlage.html')),
 );
 assert(
   'pv logo stays on pv landing',
