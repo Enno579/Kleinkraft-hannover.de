@@ -4,13 +4,18 @@ const isPreview = process.env.VERCEL_ENV === 'preview';
 
 const nextConfig: NextConfig = {
   async rewrites() {
-    return [
-      { source: '/', destination: '/index.html' },
-      { source: '/anker-dachanlage', destination: '/anker-dachanlage.html' },
-      { source: '/photovoltaik-speicher', destination: '/photovoltaik-speicher.html' },
-      { source: '/datenschutz', destination: '/datenschutz.html' },
-      { source: '/impressum', destination: '/impressum.html' },
-    ];
+    return {
+      // Serve public/index.html at / without a Location header.
+      // afterFiles would lose to app/page; a client redirect to /index.html
+      // would then fight the 308 below and loop.
+      beforeFiles: [{ source: '/', destination: '/index.html' }],
+      afterFiles: [
+        { source: '/anker-dachanlage', destination: '/anker-dachanlage.html' },
+        { source: '/photovoltaik-speicher', destination: '/photovoltaik-speicher.html' },
+        { source: '/datenschutz', destination: '/datenschutz.html' },
+        { source: '/impressum', destination: '/impressum.html' },
+      ],
+    };
   },
   async redirects() {
     return [
