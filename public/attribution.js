@@ -1,11 +1,20 @@
 /**
  * First-party capture of UTM parameters and Google Ads click IDs.
- * Does not send data to a backend (Phase 2). No test payloads with real leads.
+ * Backend: contact-form sends a snapshot to /api/contact only when marketing
+ * consent is granted. No test payloads with real leads.
+ *
+ * Consent model: Google Advanced Consent Mode v2 (not Basic) — gtag may already
+ * be loaded with default denied. This script does not delay or unload gtag.
+ *
+ * Persist/read mapping: utm_*, gclid, wbraid, gbraid, gad_source require
+ * explicit marketing consent (banner "Marketing (Google Ads)"), not analytics.
+ * On marketing revoke/deny, delete kleinkraft_attribution cookie + sessionStorage.
  */
 (function () {
   'use strict';
 
   var COOKIE_NAME = 'kleinkraft_attribution';
+  var CONSENT_EVENT = 'kleinkraft:consent';
   var KEYS = [
     'utm_source',
     'utm_medium',
@@ -27,9 +36,17 @@
     return days > 0 ? days : 90;
   }
 
+  function hasMarketingConsent() {
+    var consent =
+      window.KleinkraftConsent && typeof window.KleinkraftConsent.get === 'function'
+        ? window.KleinkraftConsent.get()
+        : null;
+    return !!(consent && consent.marketing);
+  }
+
   function parseCookie() {
     var match = document.cookie.match(new RegExp('(?:^|; )' + COOKIE_NAME + '=([^;]*)'));
-    if (!match) return null;
+    if (!match || !match[1]) return null;
     try {
       var parsed = JSON.parse(decodeURIComponent(match[1]));
       return parsed && typeof parsed === 'object' ? parsed : null;
@@ -47,6 +64,34 @@
       '; Max-Age=' +
       maxAge +
       '; Path=/; SameSite=Lax';
+  }
+
+  function writeSession(data) {
+    try {
+      window.sessionStorage.setItem(COOKIE_NAME, JSON.stringify(data));
+    } catch (err) {
+      /* private mode / blocked storage */
+    }
+  }
+
+  function readSession() {
+    try {
+      var raw = window.sessionStorage.getItem(COOKIE_NAME);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function clearStored() {
+    document.cookie = COOKIE_NAME + '=; Max-Age=0; Path=/; SameSite=Lax';
+    try {
+      window.sessionStorage.removeItem(COOKIE_NAME);
+    } catch (err) {
+      /* private mode / blocked storage */
+    }
   }
 
   function fromQuery() {
@@ -98,18 +143,24 @@
   }
 
   function capture() {
-    var merged = mergeAttribution(parseCookie(), fromQuery());
+    if (!hasMarketingConsent()) return null;
+    var merged = mergeAttribution(parseCookie() || readSession(), fromQuery());
     writeCookie(merged);
-    try {
-      window.sessionStorage.setItem(COOKIE_NAME, JSON.stringify(merged));
-    } catch (err) {
-      /* private mode / blocked storage */
-    }
+    writeSession(merged);
     return merged;
   }
 
   function get() {
-    return parseCookie() || null;
+    if (!hasMarketingConsent()) return null;
+    return parseCookie() || readSession() || null;
+  }
+
+  function applyAttributionForConsent(marketingGranted) {
+    if (marketingGranted) {
+      capture();
+    } else {
+      clearStored();
+    }
   }
 
   window.KleinkraftAttribution = {
@@ -117,5 +168,10 @@
     get: get,
   };
 
-  capture();
+  document.addEventListener(CONSENT_EVENT, function (event) {
+    var detail = event && event.detail;
+    applyAttributionForConsent(!!(detail && detail.marketing));
+  });
+
+  applyAttributionForConsent(hasMarketingConsent());
 })();

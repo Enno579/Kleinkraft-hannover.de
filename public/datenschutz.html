@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="tracking-config.js"></script>
   <script src="consent.js"></script>
+  <!-- Google Advanced Consent Mode v2: default denied first, then Ads gtag loads. -->
   <!-- Existing Google Ads gtag – keep until GTM conversion is tested. -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-328006841"></script>
   <script>
@@ -144,10 +145,10 @@
       <section aria-labelledby="attribution">
         <h2 id="attribution">Herkunftskennzeichen (UTM, Klick-IDs)</h2>
         <p>
-          Beim Aufruf der Website können Kampagnenparameter aus der URL (z. B. utm_source, utm_medium, utm_campaign) sowie Google-Ads-Klick-IDs
-          (gclid, wbraid, gbraid) in einem First-Party-Cookie auf Ihrem Gerät gespeichert werden. Zweck ist die spätere Zuordnung einer
-          freiwilligen Anfrage zu einer Kampagne oder Landingpage. Eine Übermittlung dieser Werte an uns erfolgt erst mit einer späteren
-          Anbindung des Formulars (derzeit nur lokale Speicherung im Browser).
+          Kampagnenparameter aus der URL (z. B. utm_source, utm_medium, utm_campaign) sowie Google-Ads-Klick-IDs
+          (gclid, wbraid, gbraid) speichern wir nur bei ausdrücklicher Marketing-Einwilligung lokal (First-Party-Cookie und sessionStorage).
+          Ohne diese Einwilligung oder nach Widerruf werden diese Herkunftskennzeichen nicht gelesen und vorhandene Einträge gelöscht.
+          Eine Übermittlung dieser Werte an uns erfolgt erst mit einer späteren Anbindung des Formulars.
         </p>
       </section>
 
@@ -204,6 +205,7 @@
   </div>
   <p class="legal-consent-link"><button type="button" class="legal-back" data-open-consent>Cookie-Einstellungen</button></p>
   <script src="attribution.js" defer></script>
+  <script src="engagement.js" defer></script>
   <script src="tracking.js" defer></script>
 </body>
 </html>

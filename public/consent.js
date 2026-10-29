@@ -1,6 +1,12 @@
 /**
  * First-party consent banner + Google Consent Mode v2.
  * Must load in <head> before any Google tag (gtag / GTM).
+ *
+ * Consent model: Google Advanced Consent Mode v2 (not Basic).
+ * Tags may load after this default; they must not wait for a grant.
+ * All four CM v2 signals start denied, then gtag('consent','update') on choice.
+ * Categories: analytics → analytics_storage; marketing → ad_storage,
+ * ad_user_data, ad_personalization.
  */
 (function () {
   'use strict';

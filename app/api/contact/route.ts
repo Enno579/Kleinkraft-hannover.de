@@ -1,5 +1,14 @@
+import { randomUUID } from 'crypto';
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
+import {
+  allowedProductLine,
+  appendLeadToSheet,
+  sanitizeAttribution,
+  sanitizeEngagement,
+  type AppendLeadResult,
+} from '../../../lib/leads/sheet';
+import { DEFAULT_LEAD_STATUS } from '../../../lib/leads/status';
 
 const TO_EMAIL = 'Ennosch93@gmail.com';
 const DEFAULT_FROM = 'Kleinkraft Hannover <kontakt@kleinkraft-hannover.de>';
@@ -33,6 +42,12 @@ type ContactPayload = {
   montageort?: string;
   finanzierung_interesse?: string;
   nachricht?: string;
+  product_line?: string;
+  landing_page?: string;
+  marketing_consent?: boolean;
+  analytics_consent?: boolean;
+  attribution?: unknown;
+  engagement?: unknown;
 };
 
 function escapeHtml(value: string): string {
@@ -48,15 +63,18 @@ function labelFor(value: string | undefined, labels: Record<string, string>): st
   return labels[value] ?? value;
 }
 
-function buildSubject(vorname: string, nachname: string, email: string): string {
-  if (vorname && nachname) {
-    return `Neue Beratungsanfrage – ${vorname} ${nachname}`;
-  }
-  return `Neue Beratungsanfrage – ${email}`;
+function buildSubject(vorname: string, nachname: string, email: string, leadId: string): string {
+  const who = vorname && nachname ? `${vorname} ${nachname}` : email;
+  return `Neue Beratungsanfrage – ${who} – ${leadId}`;
 }
 
-function buildEmailHtml(data: Required<Pick<ContactPayload, 'vorname' | 'nachname' | 'email'>> & ContactPayload): string {
-  const rows = [
+function buildEmailHtml(
+  data: Required<Pick<ContactPayload, 'vorname' | 'nachname' | 'email'>> &
+    ContactPayload & { lead_id: string; status: string },
+): string {
+  const rows: Array<[string, string]> = [
+    ['Lead-ID', data.lead_id],
+    ['Status', data.status],
     ['Vorname', data.vorname],
     ['Nachname', data.nachname],
     ['E-Mail', data.email],
@@ -65,6 +83,8 @@ function buildEmailHtml(data: Required<Pick<ContactPayload, 'vorname' | 'nachnam
     ['Wohnsituation', labelFor(data.wohnsituation, WOHNSITUATION_LABELS)],
     ['Montageort', labelFor(data.montageort, MONTAGEORT_LABELS)],
     ['Interesse an Finanzierung', labelFor(data.finanzierung_interesse, FINANZIERUNG_LABELS)],
+    ['Angebotslinie', data.product_line || '–'],
+    ['Landingpage', data.landing_page || '–'],
     ['Nachricht', data.nachricht || '–'],
   ];
 
@@ -72,7 +92,7 @@ function buildEmailHtml(data: Required<Pick<ContactPayload, 'vorname' | 'nachnam
     .map(
       ([label, value]) =>
         `<tr><td style="padding:8px 12px;font-weight:600;vertical-align:top;">${escapeHtml(label)}</td>` +
-        `<td style="padding:8px 12px;">${escapeHtml(value).replace(/\n/g, '<br>')}</td></tr>`
+        `<td style="padding:8px 12px;">${escapeHtml(value).replace(/\n/g, '<br>')}</td></tr>`,
     )
     .join('');
 
@@ -100,7 +120,7 @@ export async function POST(request: Request) {
   if (!apiKey) {
     return NextResponse.json(
       { error: 'E-Mail-Versand ist derzeit nicht konfiguriert. Bitte später erneut versuchen.' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -111,7 +131,7 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json(
       { error: 'Ungültige Anfrage. Bitte Formular erneut absenden.' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -122,16 +142,25 @@ export async function POST(request: Request) {
   if (!vorname || !nachname || !email) {
     return NextResponse.json(
       { error: 'Bitte Vorname, Nachname und E-Mail ausfüllen.' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json(
       { error: 'Bitte eine gültige E-Mail-Adresse eingeben.' },
-      { status: 400 }
+      { status: 400 },
     );
   }
+
+  const leadId = randomUUID();
+  const createdAt = new Date().toISOString();
+  const marketingConsent = payload.marketing_consent === true;
+  const analyticsConsent = payload.analytics_consent === true;
+  const productLine = allowedProductLine(payload.product_line);
+  const landingPage = payload.landing_page ? String(payload.landing_page).trim().slice(0, 500) : '';
+  const attribution = sanitizeAttribution(payload.attribution, marketingConsent);
+  const engagement = sanitizeEngagement(payload.engagement, analyticsConsent);
 
   const fromEmail = process.env.RESEND_FROM_EMAIL?.trim() || DEFAULT_FROM;
   const resend = new Resend(apiKey);
@@ -140,8 +169,10 @@ export async function POST(request: Request) {
     from: fromEmail,
     to: TO_EMAIL,
     replyTo: email,
-    subject: buildSubject(vorname, nachname, email),
+    subject: buildSubject(vorname, nachname, email, leadId),
     html: buildEmailHtml({
+      lead_id: leadId,
+      status: DEFAULT_LEAD_STATUS,
       vorname,
       nachname,
       email,
@@ -151,6 +182,8 @@ export async function POST(request: Request) {
       montageort: payload.montageort,
       finanzierung_interesse: payload.finanzierung_interesse,
       nachricht: payload.nachricht?.trim(),
+      product_line: productLine || undefined,
+      landing_page: landingPage || undefined,
     }),
   });
 
@@ -158,9 +191,64 @@ export async function POST(request: Request) {
     console.error('Resend error:', error);
     return NextResponse.json(
       { error: 'Die Anfrage konnte nicht gesendet werden. Bitte später erneut versuchen oder uns direkt kontaktieren.' },
-      { status: 502 }
+      { status: 502 },
     );
   }
 
-  return NextResponse.json({ success: true });
+  let sheet: AppendLeadResult = {
+    ok: false,
+    skipped: true,
+    sheet_status: 'skipped_missing_config',
+  };
+
+  try {
+    sheet = await appendLeadToSheet({
+      lead_id: leadId,
+      created_at: createdAt,
+      status: DEFAULT_LEAD_STATUS,
+      vorname,
+      nachname,
+      email,
+      telefon: payload.telefon?.trim(),
+      jahresverbrauch: payload.jahresverbrauch?.trim(),
+      wohnsituation: payload.wohnsituation,
+      montageort: payload.montageort,
+      finanzierung_interesse: payload.finanzierung_interesse,
+      nachricht: payload.nachricht?.trim(),
+      product_line: productLine || undefined,
+      landing_page: landingPage || undefined,
+      marketing_consent: marketingConsent,
+      analytics_consent: analyticsConsent,
+      attribution,
+      engagement,
+    });
+  } catch (sheetErr) {
+    console.error('[leads] appendLeadToSheet failed (e-mail already sent):', sheetErr);
+    sheet = {
+      ok: false,
+      skipped: false,
+      sheet_status: 'error',
+      sheet_error: 'sheets_append_failed',
+    };
+  }
+
+  const sheetOk =
+    sheet.sheet_status === 'appended' || sheet.sheet_status === 'skipped_duplicate_lead_id';
+  const body: {
+    success: true;
+    lead_id: string;
+    sheet_ok: boolean;
+    sheet_status: string;
+    sheet_error?: string;
+  } = {
+    success: true,
+    lead_id: leadId,
+    sheet_ok: sheetOk,
+    sheet_status: sheet.sheet_status,
+  };
+  if (sheet.sheet_status === 'error') {
+    body.sheet_error = sheet.sheet_error || 'sheets_append_failed';
+  }
+
+  return NextResponse.json(body);
 }
