@@ -14,12 +14,56 @@
     '<p class="contact-form__feedback-sub">Enno Scharf wird sich direkt persönlich innerhalb der nächsten 24 Stunden bei Ihnen melden.</p>' +
     '</div>';
 
-  function trackGoogleAdsConversion() {
+  function consentChoice() {
+    var consent =
+      window.KleinkraftConsent && typeof window.KleinkraftConsent.get === 'function'
+        ? window.KleinkraftConsent.get()
+        : null;
+    return {
+      analytics: !!(consent && consent.analytics),
+      marketing: !!(consent && consent.marketing),
+    };
+  }
+
+  function attributionSnapshot(marketingGranted) {
+    if (!marketingGranted) return null;
+    if (!window.KleinkraftAttribution || typeof window.KleinkraftAttribution.get !== 'function') {
+      return null;
+    }
+    return window.KleinkraftAttribution.get() || null;
+  }
+
+  function engagementSnapshot(analyticsGranted) {
+    if (!analyticsGranted) return null;
+    if (!window.KleinkraftEngagement || typeof window.KleinkraftEngagement.getSnapshot !== 'function') {
+      return null;
+    }
+    return window.KleinkraftEngagement.getSnapshot() || null;
+  }
+
+  function pushGenerateLead(leadId) {
+    window.dataLayer = window.dataLayer || [];
+    var payload = {
+      event: 'generate_lead',
+      lead_event_source: 'contact_form',
+    };
+    if (leadId) payload.lead_id = leadId;
+    window.dataLayer.push(payload);
+  }
+
+  function trackGoogleAdsConversion(leadId) {
     if (conversionFired) return;
-    if (typeof gtag !== 'function') return;
     conversionFired = true;
+    pushGenerateLead(leadId);
+
+    var tracking = window.KLEINKRAFT_TRACKING || {};
+    if (tracking.migrateAdsConversionToGtm) {
+      return;
+    }
+
+    if (typeof gtag !== 'function') return;
     gtag('event', 'conversion', {
-      send_to: GOOGLE_ADS_CONVERSION_SEND_TO,
+      send_to: tracking.adsConversionSendTo || GOOGLE_ADS_CONVERSION_SEND_TO,
       value: 1.0,
       currency: 'EUR',
     });
@@ -118,6 +162,8 @@
         btn.disabled = true;
       }
 
+      var choice = consentChoice();
+      var productLine = getField('product_line') || contactForm.getAttribute('data-product-line') || '';
       var formData = {
         vorname: vorname,
         nachname: nachname,
@@ -128,7 +174,19 @@
         montageort: getField('montageort'),
         finanzierung_interesse: getField('finanzierung_interesse'),
         nachricht: getField('nachricht'),
+        product_line: productLine || undefined,
+        landing_page: (window.location && window.location.pathname) || '/',
+        marketing_consent: choice.marketing,
+        analytics_consent: choice.analytics,
       };
+      if (choice.marketing) {
+        var attr = attributionSnapshot(true);
+        if (attr) formData.attribution = attr;
+      }
+      if (choice.analytics) {
+        var eng = engagementSnapshot(true);
+        if (eng) formData.engagement = eng;
+      }
 
       fetch('/api/contact', {
         method: 'POST',
@@ -144,7 +202,7 @@
           if (result.ok && result.data.success) {
             contactForm.reset();
             showSuccessFeedback();
-            trackGoogleAdsConversion();
+            trackGoogleAdsConversion(result.data.lead_id);
           } else {
             showErrorFeedback(
               result.data.error || 'Die Anfrage konnte nicht gesendet werden. Bitte versuche es später erneut.',

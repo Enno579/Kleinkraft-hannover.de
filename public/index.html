@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Google tag (gtag.js) -->
+  <script src="tracking-config.js"></script>
+  <script src="consent.js"></script>
+  <!-- Google Advanced Consent Mode v2: default denied is set above, then Ads gtag loads (not Basic / not blocked until grant). -->
+  <!-- Existing Google Ads gtag – keep until GTM conversion is tested (see tracking-config.js). -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-328006841"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -1158,11 +1161,15 @@
       <nav class="footer__links" aria-label="Rechtliches">
         <a href="impressum.html">Impressum</a>
         <a href="datenschutz.html">Datenschutz</a>
+        <button type="button" class="footer__consent" data-open-consent>Cookie-Einstellungen</button>
       </nav>
       <p class="footer__copy">&copy; <span id="year"></span> Enno Scharf</p>
     </div>
   </footer>
 
+  <script src="attribution.js" defer></script>
+  <script src="engagement.js" defer></script>
+  <script src="tracking.js" defer></script>
   <script src="contact-form.js" defer></script>
   <script src="reviews-carousel.js" defer></script>
   <script src="script.js" defer></script>

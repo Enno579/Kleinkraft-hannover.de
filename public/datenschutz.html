@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Google tag (gtag.js) -->
+  <script src="tracking-config.js"></script>
+  <script src="consent.js"></script>
+  <!-- Google Advanced Consent Mode v2: default denied first, then Ads gtag loads. -->
+  <!-- Existing Google Ads gtag – keep until GTM conversion is tested. -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-328006841"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -68,6 +71,10 @@
     .legal-main a {
       color: #a9c7ff;
     }
+    .legal-consent-link {
+      width: min(920px, 92vw);
+      margin: 0 auto 2rem;
+    }
   </style>
 </head>
 <body>
@@ -83,6 +90,7 @@
 
     <main class="legal-main">
       <h1>Datenschutzerklärung</h1>
+      <p><strong>Entwurf zur Prüfung</strong> – noch nicht rechtlich verbindlich abgenommen. Bitte vor dem Livegang fachlich prüfen.</p>
 
       <section aria-labelledby="verantwortlicher">
         <h2 id="verantwortlicher">Verantwortlicher</h2>
@@ -96,25 +104,77 @@
         <h2 id="datenerfassung">Datenerfassung / Hinweis</h2>
         <p>
           Der Schutz Ihrer persönlichen Daten ist uns wichtig. Personenbezogene Daten werden auf dieser Website nur im notwendigen Umfang
-          verarbeitet. Die Verarbeitung erfolgt auf Grundlage der jeweils geltenden gesetzlichen Bestimmungen.
+          verarbeitet. Die Verarbeitung erfolgt auf Grundlage der jeweils geltenden gesetzlichen Bestimmungen, insbesondere der DSGVO und des TDDDG.
         </p>
         <p>
           Beim Besuch dieser Website können technisch erforderliche Daten (z. B. Browsertyp, Uhrzeit des Zugriffs, aufgerufene Seite)
-          vorübergehend verarbeitet werden, um die sichere Bereitstellung der Website zu gewährleisten.
+          vorübergehend verarbeitet werden, um die sichere Bereitstellung der Website zu gewährleisten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO
+          (berechtigtes Interesse an einem sicheren und funktionsfähigen Betrieb).
         </p>
       </section>
 
-      <section aria-labelledby="formspree">
-        <h2 id="formspree">Nutzung von Formspree</h2>
+      <section aria-labelledby="cookies">
+        <h2 id="cookies">Cookies und Einwilligung</h2>
         <p>
-          Für Kontakt- und Bewerbungsformulare nutzen wir den Dienst Formspree. Wenn Sie ein Formular absenden, werden die von Ihnen
-          eingegebenen Daten an Formspree übermittelt und dort zur Bearbeitung Ihrer Anfrage verarbeitet.
+          Technisch notwendige Cookies setzen wir, damit die Website und Ihre Auswahl (z. B. Einwilligungseinstellungen) funktionieren.
+          Statistik- und Marketing-Cookies bzw. vergleichbare Technologien setzen wir nur, wenn Sie über das Einwilligungsbanner zugestimmt haben.
+          Sie können Ihre Auswahl jederzeit über den Link „Cookie-Einstellungen“ im Footer oder erneut über das Banner ändern bzw. widerrufen.
         </p>
         <p>
-          Weitere Informationen zur Datenverarbeitung durch Formspree finden Sie in der Datenschutzerklärung von Formspree:
-          <a href="https://formspree.io/legal/privacy-policy/" target="_blank" rel="noopener noreferrer">
-            https://formspree.io/legal/privacy-policy/
-          </a>.
+          Wir verwenden Google Consent Mode v2. Bis zu einer Einwilligung sind Speicherungen für Werbung und Analyse standardmäßig unterbunden
+          (<code>ad_storage</code>, <code>ad_user_data</code>, <code>ad_personalization</code>, <code>analytics_storage</code>: denied).
+        </p>
+      </section>
+
+      <section aria-labelledby="kontaktformular">
+        <h2 id="kontaktformular">Kontaktformular und E-Mail-Versand</h2>
+        <p>
+          Wenn Sie das Kontaktformular absenden, verarbeiten wir die angegebenen Daten (z. B. Name, E-Mail-Adresse, Telefonnummer, Angaben zur
+          Anfrage), um Ihre Anfrage zu beantworten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahmen / Vertrag)
+          bzw. Art. 6 Abs. 1 lit. f DSGVO, soweit die Anfrage allgemein erfolgt.
+        </p>
+        <p>
+          Der Versand erfolgt über den Dienstleister Resend. Die Daten werden an Resend übermittelt, um die E-Mail zuzustellen.
+          Weitere Informationen: <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">Datenschutzerklärung von Resend</a>.
+        </p>
+        <p>
+          Eine ältere Formulierung zu Formspree gilt nicht mehr; Formspree wird für dieses Formular nicht verwendet.
+        </p>
+      </section>
+
+      <section aria-labelledby="attribution">
+        <h2 id="attribution">Herkunftskennzeichen (UTM, Klick-IDs)</h2>
+        <p>
+          Kampagnenparameter aus der URL (z. B. utm_source, utm_medium, utm_campaign) sowie Google-Ads-Klick-IDs
+          (gclid, wbraid, gbraid) speichern wir nur bei ausdrücklicher Marketing-Einwilligung lokal (First-Party-Cookie und sessionStorage).
+          Ohne diese Einwilligung oder nach Widerruf werden diese Herkunftskennzeichen nicht gelesen und vorhandene Einträge gelöscht.
+          Eine Übermittlung dieser Werte an uns erfolgt erst mit einer späteren Anbindung des Formulars.
+        </p>
+      </section>
+
+      <section aria-labelledby="gtm">
+        <h2 id="gtm">Google Tag Manager, Google Analytics 4 und Google Ads</h2>
+        <p>
+          Wir setzen Google-Dienste der Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland, ein. Eine Übermittlung in die USA
+          kann nicht ausgeschlossen werden (Google LLC). Soweit eine Einwilligung vorliegt, ist Rechtsgrundlage Art. 6 Abs. 1 lit. a DSGVO;
+          der Widerruf ist jederzeit mit Wirkung für die Zukunft möglich.
+        </p>
+        <p>
+          <strong>Google Tag Manager</strong> wird nur geladen, wenn eine Container-ID hinterlegt ist. Der Tag Manager selbst setzt in der Regel
+          keine eigenen Tracking-Cookies, kann aber andere Tags auslösen.
+        </p>
+        <p>
+          <strong>Google Analytics 4</strong> wird nur mit Einwilligung in die Statistik-Kategorie und nur bei hinterlegter Mess-ID genutzt.
+          IP-Anonymisierung ist vorgesehen. GA4 kann Nutzungsdaten (z. B. Seitenaufrufe, Ereignisse wie eine erfolgreiche Kontaktanfrage) erfassen.
+        </p>
+        <p>
+          <strong>Google Ads</strong> (Conversion-Tracking, Konto-ID AW-328006841) ist derzeit noch direkt über gtag eingebunden. Conversion-Ereignisse
+          werden nach erfolgreichem Absenden des Kontaktformulars ausgelöst. Ohne Marketing-Einwilligung speichert Google Ads nach Consent Mode
+          keine Werbe-Cookies; messbare Conversions können dann eingeschränkt sein.
+        </p>
+        <p>
+          Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google-Datenschutzerklärung</a>,
+          <a href="https://business.safety.google/privacy/" target="_blank" rel="noopener noreferrer">Google Business Privacy</a>.
         </p>
       </section>
 
@@ -126,7 +186,11 @@
         </p>
         <p>
           Außerdem haben Sie das Recht auf Datenübertragbarkeit sowie das Recht, eine erteilte Einwilligung mit Wirkung für die Zukunft
-          zu widerrufen. Bei datenschutzrechtlichen Anliegen können Sie uns jederzeit per E-Mail kontaktieren.
+          zu widerrufen. Sie haben das Recht, bei einer Aufsichtsbehörde Beschwerde einzulegen (in Niedersachsen: Die Landesbeauftragte
+          für den Datenschutz Niedersachsen).
+        </p>
+        <p>
+          Bei datenschutzrechtlichen Anliegen können Sie uns jederzeit per E-Mail kontaktieren.
         </p>
       </section>
 
@@ -139,5 +203,9 @@
       </section>
     </main>
   </div>
+  <p class="legal-consent-link"><button type="button" class="legal-back" data-open-consent>Cookie-Einstellungen</button></p>
+  <script src="attribution.js" defer></script>
+  <script src="engagement.js" defer></script>
+  <script src="tracking.js" defer></script>
 </body>
 </html>
