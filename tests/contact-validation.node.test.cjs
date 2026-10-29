@@ -37,8 +37,10 @@ assert('sheet columns still start with lead_id and include telefon then later pr
 assert('route requires phone', /isValidPhone/.test(route) && /Telefon/.test(route));
 assert('route requires product_line', /Anker SOLIX auf dem Hausdach oder Photovoltaik mit Speicher/.test(route));
 assert('next config rewrites offer pages', /anker-dachanlage\.html/.test(cfg) && /photovoltaik-speicher\.html/.test(cfg));
+assert('homepage rewrite is beforeFiles not a client redirect', /beforeFiles/.test(cfg) && /source: '\/'/.test(cfg));
+assert('no App Router redirect to /index.html', !fs.existsSync(path.join(ROOT, 'app/page.tsx')) || !/redirect\(\s*['"]\/index\.html['"]/.test(read('app/page.tsx')));
 assert('preview X-Robots-Tag noindex', /VERCEL_ENV === 'preview'/.test(cfg) && /noindex/.test(cfg));
-assert('permanent redirects for html slugs', /permanent: true/.test(cfg) && /anker-dachanlage.html/.test(cfg));
+assert('permanent redirects for html slugs', /permanent: true/.test(cfg) && /anker-dachanlage.html/.test(cfg) && /source: '\/index\.html'/.test(cfg));
 assert('tracking config unchanged GTM Q', /gtmId:\s*'GTM-MR53Q3RK'/.test(read('public/tracking-config.js')));
 assert('ga4Id empty', /ga4Id:\s*''/.test(read('public/tracking-config.js')));
 assert('migrateAdsConversionToGtm false', /migrateAdsConversionToGtm:\s*false/.test(read('public/tracking-config.js')));
