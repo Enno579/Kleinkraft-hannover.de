@@ -160,8 +160,23 @@ export function allowedProductLine(value: unknown): ProductLine | '' {
 
 export type ServiceAccountCreds = { email: string; key: string };
 
-function normalizePrivateKey(raw: string): string {
-  return raw.replace(/\\n/g, '\n').trim();
+/** PEM / PKCS#8 as Google and Vercel actually deliver it (quotes, `\n`, real newlines). */
+export function normalizePrivateKey(raw: string): string {
+  let key = raw.replace(/^\uFEFF/, '').trim();
+  if (key.length >= 2) {
+    const start = key[0];
+    const end = key[key.length - 1];
+    if ((start === '"' && end === '"') || (start === "'" && end === "'")) {
+      key = key.slice(1, -1).trim();
+    }
+  }
+  // Literal \n / \r from JSON or a single-line env value. No-op when the PEM
+  // already has real newlines (PKCS#8 base64 never contains a backslash).
+  for (let i = 0; i < 2; i++) {
+    if (!/\\[nr]/.test(key)) break;
+    key = key.replace(/\\n/g, '\n').replace(/\\r/g, '\r');
+  }
+  return key.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
 }
 
 export function parseServiceAccountJson(raw: string): ServiceAccountCreds | null {
