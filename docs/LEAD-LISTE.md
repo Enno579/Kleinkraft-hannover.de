@@ -21,12 +21,12 @@ Zwei Absenden im Formular = **zwei** `lead_id`s = **zwei** Zeilen. Der Client er
 
 ## Angebote (für `product_line`)
 
-| Wert | Bedeutung |
+| Wert | Label (`offer_label`) |
 | --- | --- |
-| `pv_classic` | Angebot A: klassische PV-Komplettanlagen mit Speicher |
-| `anker_solix` | Angebot B: premium Anker SOLIX Dach/Garage für Eigenheim; Ziel-Komplettpreis 8.000–13.000 EUR; **keine** günstigen Balkon-Sets |
+| `anker_dachanlage` | Anker-Dachanlage |
+| `klassische_photovoltaik` | Klassische Photovoltaik |
 
-`product_line` ist optional (aktuelles Kontaktformular sendet es nur, wenn `data-product-line` oder ein Hidden-Field gesetzt ist).
+`product_line` ist Pflicht beim Absenden (Select auf der Startseite, Hidden-Field auf den Angebotsseiten). Alte Werte `pv_classic` / `anker_solix` werden nicht mehr akzeptiert. Spaltenreihenfolge der Tabelle bleibt unverändert.
 
 ## Vertriebsstatus
 
@@ -59,13 +59,13 @@ Reihenfolge **von links nach rechts**, Zeile 1 = Kopfzeile. Default-Tab und Rang
 | 4 | `vorname` | ja | Formulardaten |
 | 5 | `nachname` | ja | Formulardaten |
 | 6 | `email` | ja | Formulardaten |
-| 7 | `telefon` | nein | |
+| 7 | `telefon` | ja | Pflicht im Formular; international |
 | 8 | `jahresverbrauch` | nein | |
 | 9 | `wohnsituation` | nein | |
 | 10 | `montageort` | nein | |
 | 11 | `finanzierung_interesse` | nein | |
 | 12 | `nachricht` | nein | |
-| 13 | `product_line` | nein | `pv_classic` / `anker_solix` |
+| 13 | `product_line` | ja | `anker_dachanlage` / `klassische_photovoltaik` |
 | 14 | `offer_label` | nein | Lesbare Bezeichnung A/B |
 | 15 | `landing_page` | nein | Pfad der Absendeseite |
 | 16 | `campaign` | nein | Kopie von `utm_campaign`, nur mit Marketing-Consent |

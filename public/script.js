@@ -101,7 +101,7 @@
 
   /* ---- Calculator (pure math) ---- */
 
-  var ANLAGENPREIS = 8000;
+  var ANLAGENPREIS = 10000;
   var SYSTEM_KW = 4;
   var YIELD_KWH_PER_KWP = 950;
   var SELF_CONSUMPTION_LOW = 0.70;
@@ -677,8 +677,11 @@
 
     if (elDetailMit) {
       elDetailMit.textContent =
-        SYSTEM_KW + '.000 W · 8,1 kWh Speicher · ~' +
-        Math.round(mit.annualProduction) + ' kWh Erzeugung/Jahr';
+        'Modell ~' +
+        SYSTEM_KW +
+        ' kWp · ~' +
+        Math.round(mit.annualProduction) +
+        ' kWh Erzeugung/Jahr (nicht Ihr Angebot)';
     }
 
     if (finNote) {

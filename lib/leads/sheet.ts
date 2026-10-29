@@ -1,5 +1,11 @@
 import { JWT } from 'google-auth-library';
-import { DEFAULT_LEAD_STATUS, timestampKeyForStatus, type LeadStatus, type ProductLine } from './status';
+import {
+  DEFAULT_LEAD_STATUS,
+  PRODUCT_LINES,
+  timestampKeyForStatus,
+  type LeadStatus,
+  type ProductLine,
+} from './status';
 
 /**
  * Google Sheets lead list via Sheets API v4 REST + service-account JWT.
@@ -103,10 +109,6 @@ export const DEFAULT_SHEETS_RANGE = 'Leads!A1';
 const SHEETS_SCOPE = 'https://www.googleapis.com/auth/spreadsheets';
 const DEDUPE_LOOKBACK_ROWS = 200;
 
-const PRODUCT_LINE_LABELS: Record<string, string> = {
-  pv_classic: 'A – klassische PV komplett mit Speicher',
-  anker_solix: 'B – Anker SOLIX Dach/Garage (8.000–13.000 EUR)',
-};
 
 /** Same-request / same-isolate: do not append the same lead_id twice in one handler. */
 const appendedOrAttemptedLeadIds = new Set<string>();
@@ -154,7 +156,7 @@ export function sanitizeEngagement(
 
 export function allowedProductLine(value: unknown): ProductLine | '' {
   const v = clip(value, 40);
-  if (v === 'pv_classic' || v === 'anker_solix') return v;
+  if (v === 'anker_dachanlage' || v === 'klassische_photovoltaik') return v;
   return '';
 }
 
@@ -243,7 +245,7 @@ export function buildLeadSheetRow(input: LeadSheetInput): string[] {
     finanzierung_interesse: clip(input.finanzierung_interesse, 40),
     nachricht: clip(input.nachricht, 4000),
     product_line: productLine,
-    offer_label: productLine ? PRODUCT_LINE_LABELS[productLine] : '',
+    offer_label: productLine ? PRODUCT_LINES[productLine] : '',
     landing_page: landing,
     campaign: attr?.utm_campaign || '',
     utm_source: attr?.utm_source || '',

@@ -15,8 +15,8 @@ export type LeadStatus = (typeof LEAD_STATUSES)[number];
 export const DEFAULT_LEAD_STATUS: LeadStatus = 'Neue Anfrage';
 
 export const PRODUCT_LINES = {
-  pv_classic: 'Angebot A – klassische PV-Komplettanlage mit Speicher',
-  anker_solix: 'Angebot B – Anker SOLIX Dach/Garage (Zielpreis 8.000–13.000 EUR)',
+  anker_dachanlage: 'Anker-Dachanlage',
+  klassische_photovoltaik: 'Klassische Photovoltaik',
 } as const;
 
 export type ProductLine = keyof typeof PRODUCT_LINES;

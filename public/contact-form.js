@@ -3,6 +3,10 @@
 
   var GOOGLE_ADS_CONVERSION_SEND_TO = 'AW-328006841/0NTKCJzv5cgCENs5s5wB';
   var conversionFired = false;
+  var ALLOWED_PRODUCT_LINES = {
+    anker_dachanlage: 'Anker-Dachanlage',
+    klassische_photovoltaik: 'Klassische Photovoltaik',
+  };
 
   var SUCCESS_MESSAGE_HTML =
     '<div class="contact-form__feedback-icon" aria-hidden="true">' +
@@ -13,6 +17,24 @@
     '<p class="contact-form__feedback-lead">Vielen herzlichen Dank für Ihre Kontaktaufnahme.</p>' +
     '<p class="contact-form__feedback-sub">Enno Scharf wird sich direkt persönlich innerhalb der nächsten 24 Stunden bei Ihnen melden.</p>' +
     '</div>';
+
+  function isValidPhone(raw) {
+    var s = String(raw || '').trim();
+    if (!s || s.length > 40) return false;
+    if (!/^[+0-9()/\.\-\s]+$/.test(s)) return false;
+    var digits = s.replace(/\D/g, '');
+    return digits.length >= 8 && digits.length <= 15;
+  }
+
+  function allowedProductLine(value) {
+    var v = String(value || '').trim();
+    return Object.prototype.hasOwnProperty.call(ALLOWED_PRODUCT_LINES, v) ? v : '';
+  }
+
+  window.KleinkraftContact = {
+    isValidPhone: isValidPhone,
+    allowedProductLine: allowedProductLine,
+  };
 
   function consentChoice() {
     var consent =
@@ -105,6 +127,49 @@
       }
     }
 
+    function fieldWrap(el) {
+      if (!el) return null;
+      var node = el.parentNode;
+      while (node && node !== contactForm) {
+        if (node.className && String(node.className).indexOf('field') !== -1) return node;
+        node = node.parentNode;
+      }
+      return el.parentNode;
+    }
+
+    function setFieldError(name, message) {
+      var field = contactForm.querySelector('[name="' + name + '"]');
+      var wrap = fieldWrap(field);
+      if (!field || !wrap) return;
+      wrap.classList.add('field--error');
+      field.setAttribute('aria-invalid', 'true');
+      var errId = name + '-error';
+      var err = document.getElementById(errId);
+      if (!err) {
+        err = document.createElement('p');
+        err.id = errId;
+        err.className = 'field__error';
+        wrap.appendChild(err);
+      }
+      err.textContent = message;
+      field.setAttribute('aria-describedby', errId);
+    }
+
+    function clearFieldErrors() {
+      var wraps = contactForm.querySelectorAll('.field--error');
+      for (var i = 0; i < wraps.length; i++) {
+        wraps[i].classList.remove('field--error');
+      }
+      var errs = contactForm.querySelectorAll('.field__error');
+      for (var j = 0; j < errs.length; j++) {
+        errs[j].textContent = '';
+      }
+      var invalids = contactForm.querySelectorAll('[aria-invalid="true"]');
+      for (var k = 0; k < invalids.length; k++) {
+        invalids[k].removeAttribute('aria-invalid');
+      }
+    }
+
     function revealFeedback() {
       formFeedback.hidden = false;
       formFeedback.classList.remove('is-visible');
@@ -144,18 +209,57 @@
     contactForm.addEventListener('submit', function (event) {
       event.preventDefault();
       clearFormFeedback();
+      clearFieldErrors();
 
       var vorname = getField('vorname');
       var nachname = getField('nachname');
       var email = getField('email');
+      var telefon = getField('telefon');
+      var productLine = allowedProductLine(
+        getField('product_line') || contactForm.getAttribute('data-product-line') || '',
+      );
 
-      if (!vorname || !nachname || !email) {
-        showErrorFeedback('Bitte fülle Vorname, Nachname und E-Mail aus.');
-        return;
+      var hasError = false;
+      if (!vorname) {
+        setFieldError('vorname', 'Bitte Vorname angeben.');
+        hasError = true;
+      }
+      if (!nachname) {
+        setFieldError('nachname', 'Bitte Nachname angeben.');
+        hasError = true;
+      }
+      if (!email) {
+        setFieldError('email', 'Bitte E-Mail angeben.');
+        hasError = true;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setFieldError('email', 'Bitte eine gültige E-Mail-Adresse eingeben.');
+        hasError = true;
+      }
+      if (!telefon) {
+        setFieldError(
+          'telefon',
+          'Telefon ist Pflicht. Bitte eine erreichbare Nummer angeben (z. B. +49 156 78444101).',
+        );
+        hasError = true;
+      } else if (!isValidPhone(telefon)) {
+        setFieldError(
+          'telefon',
+          'Bitte eine gültige Telefonnummer angeben (8–15 Ziffern, international möglich).',
+        );
+        hasError = true;
+      }
+      if (!productLine) {
+        setFieldError(
+          'product_line',
+          'Bitte wählen, welches Anliegen Sie betrifft: Anker SOLIX auf dem Hausdach oder Photovoltaik mit Speicher.',
+        );
+        hasError = true;
       }
 
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showErrorFeedback('Bitte gib eine gültige E-Mail-Adresse ein.');
+      if (hasError) {
+        showErrorFeedback('Bitte die markierten Pflichtfelder prüfen – Telefon und Angebotslinie sind erforderlich.');
+        var firstErr = contactForm.querySelector('.field--error input, .field--error select');
+        if (firstErr && typeof firstErr.focus === 'function') firstErr.focus();
         return;
       }
 
@@ -167,18 +271,17 @@
       }
 
       var choice = consentChoice();
-      var productLine = getField('product_line') || contactForm.getAttribute('data-product-line') || '';
       var formData = {
         vorname: vorname,
         nachname: nachname,
         email: email,
-        telefon: getField('telefon'),
+        telefon: telefon,
         jahresverbrauch: getField('jahresverbrauch'),
         wohnsituation: getField('wohnsituation'),
         montageort: getField('montageort'),
         finanzierung_interesse: getField('finanzierung_interesse'),
         nachricht: getField('nachricht'),
-        product_line: productLine || undefined,
+        product_line: productLine,
         landing_page: (window.location && window.location.pathname) || '/',
         marketing_consent: choice.marketing,
         analytics_consent: choice.analytics,
@@ -207,6 +310,10 @@
             pushGenerateLead(result.data.lead_id);
             trackGoogleAdsConversion();
             contactForm.reset();
+            if (contactForm.getAttribute('data-product-line')) {
+              var hidden = contactForm.querySelector('[name="product_line"]');
+              if (hidden) hidden.value = contactForm.getAttribute('data-product-line');
+            }
             showSuccessFeedback();
           } else {
             showErrorFeedback(
@@ -228,9 +335,11 @@
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initContactForm);
-  } else {
-    initContactForm();
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initContactForm);
+    } else {
+      initContactForm();
+    }
   }
 })();
