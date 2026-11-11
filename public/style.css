@@ -203,8 +203,8 @@ button, input, select, textarea {
 
 .nav__links {
   display: none;
-  gap: 1.75rem;
-  font-size: 0.9rem;
+  gap: 1.1rem;
+  font-size: 0.88rem;
   font-weight: 500;
 }
 
