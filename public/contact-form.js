@@ -238,7 +238,7 @@
       if (!telefon) {
         setFieldError(
           'telefon',
-          'Telefon ist Pflicht. Bitte eine erreichbare Nummer angeben (z. B. +49 156 78444101).',
+          'Bitte eine erreichbare Telefonnummer angeben (z. B. +49 156 78444101).',
         );
         hasError = true;
       } else if (!isValidPhone(telefon)) {
@@ -257,7 +257,7 @@
       }
 
       if (hasError) {
-        showErrorFeedback('Bitte die markierten Pflichtfelder prüfen – Telefon und Angebotslinie sind erforderlich.');
+        showErrorFeedback('Bitte die markierten Pflichtfelder prüfen.');
         var firstErr = contactForm.querySelector('.field--error input, .field--error select');
         if (firstErr && typeof firstErr.focus === 'function') firstErr.focus();
         return;

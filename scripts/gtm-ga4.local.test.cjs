@@ -403,12 +403,13 @@ assert(
 );
 assert(
   'anker H1 is independent Anker SOLIX headline',
-  /<h1[^>]*>Anker SOLIX mit Speicher für dein Zuhause in Hannover<\/h1>/.test(
+  /<h1[^>]*>Deine Anker-Solaranlage fürs Hausdach – mit Speicher und professioneller Montage\.<\/h1>/.test(
     readPublic('index.html'),
   ) &&
-    /<h1[^>]*>Anker SOLIX mit Speicher für dein Zuhause in Hannover<\/h1>/.test(
+    /<h1[^>]*>Deine Anker-Solaranlage fürs Hausdach – mit Speicher und professioneller Montage\.<\/h1>/.test(
       readPublic('anker-dachanlage.html'),
-    ),
+    ) &&
+    !/Klassische PV-Anlage/.test(readPublic('index.html')),
 );
 assert(
   'both landings use Hannover hero photo',

@@ -4862,3 +4862,91 @@ button, input, select, textarea {
 .landing .faq {
   margin-top: 0.5rem;
 }
+
+.person {
+  display: grid;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (min-width: 760px) {
+  .person { grid-template-columns: 200px 1fr; gap: 2.25rem; }
+}
+
+.person__photo {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  background: var(--gray-100);
+}
+
+.person p + p { margin-top: 0.75rem; }
+
+.tech-details {
+  margin-top: 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  font-size: 0.92rem;
+  color: var(--gray-600);
+}
+
+.tech-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--navy-800);
+}
+
+.tech-details p { margin: 0.75rem 0 0; }
+
+.contact-form__next {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  color: var(--gray-600);
+}
+
+.contact-bar {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .contact-bar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    gap: 0.6rem;
+    padding: 0.65rem 0.85rem calc(0.65rem + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.96);
+    border-top: 1px solid var(--gray-200);
+    box-shadow: 0 -8px 24px rgba(7, 21, 37, 0.08);
+  }
+
+  .contact-bar a {
+    flex: 1;
+    text-align: center;
+    padding: 0.7rem 0.5rem;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--navy-900);
+    background: var(--gray-100);
+  }
+
+  .contact-bar__cta {
+    background: var(--solar) !important;
+    color: var(--navy-950) !important;
+  }
+
+  .has-consent-banner .contact-bar { display: none; }
+
+  body.landing { padding-bottom: 4.75rem; }
+}

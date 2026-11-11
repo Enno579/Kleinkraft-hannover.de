@@ -895,7 +895,8 @@
     var url =
       'https://www.youtube.com/embed/' + YOUTUBE_VIDEO_ID +
       '?origin=' + origin +
-      '&widget_referrer=' + origin;
+      '&widget_referrer=' + origin +
+      '&rel=0';
     if (autoplay) url += '&autoplay=1';
     return url;
   }
