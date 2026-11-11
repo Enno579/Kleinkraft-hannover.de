@@ -397,7 +397,7 @@ assert(
 );
 assert(
   'pv H1 is visitor-friendly without Klassische PV-Anlage',
-  /<h1[^>]*>Photovoltaik mit Speicher für dein Zuhause in Hannover<\/h1>/.test(
+  /<h1[^>]*>Ihre Photovoltaikanlage mit Speicher – passend zu Ihrem Zuhause\.<\/h1>/.test(
     readPublic('photovoltaik-speicher.html'),
   ) && !/Klassische PV-Anlage/.test(readPublic('photovoltaik-speicher.html')),
 );
