@@ -317,7 +317,9 @@
 
   function onScroll() {
     if (!nav) return;
-    nav.classList.toggle('nav--scrolled', window.scrollY > 40);
+    var compact = window.scrollY > 40;
+    nav.classList.toggle('nav--scrolled', compact);
+    document.documentElement.classList.toggle('nav-compact', compact);
 
     if (!prefersReducedMotion && heroImg) {
       var offset = Math.min(window.scrollY * 0.22, 120);
