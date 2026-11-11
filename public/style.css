@@ -2646,9 +2646,10 @@ button, input, select, textarea {
 .field--full { grid-column: 1 / -1; }
 
 .field__hint {
-  font-size: 0.75rem;
-  color: var(--gray-400);
+  font-size: 0.8rem;
+  color: var(--gray-600);
   margin-top: 0.15rem;
+  line-height: 1.45;
 }
 
 .field label {

@@ -26,6 +26,17 @@
     return digits.length >= 8 && digits.length <= 15;
   }
 
+  function isValidJahresverbrauch(raw) {
+    var s = String(raw || '').trim().replace(/\s/g, '').replace(',', '.');
+    if (!s || !/^\d+(\.\d+)?$/.test(s)) return false;
+    var n = Number(s);
+    return isFinite(n) && n >= 100 && n <= 200000;
+  }
+
+  function isValidNachricht(raw) {
+    return String(raw || '').trim().length > 0;
+  }
+
   function allowedProductLine(value) {
     var v = String(value || '').trim();
     return Object.prototype.hasOwnProperty.call(ALLOWED_PRODUCT_LINES, v) ? v : '';
@@ -33,6 +44,8 @@
 
   window.KleinkraftContact = {
     isValidPhone: isValidPhone,
+    isValidJahresverbrauch: isValidJahresverbrauch,
+    isValidNachricht: isValidNachricht,
     allowedProductLine: allowedProductLine,
   };
 
@@ -255,10 +268,28 @@
         );
         hasError = true;
       }
+      var jahresverbrauch = getField('jahresverbrauch');
+      if (!jahresverbrauch) {
+        setFieldError('jahresverbrauch', 'Bitte Ihren Jahresstromverbrauch in kWh angeben.');
+        hasError = true;
+      } else if (!isValidJahresverbrauch(jahresverbrauch)) {
+        setFieldError(
+          'jahresverbrauch',
+          'Bitte einen plausiblen Jahresstromverbrauch in kWh angeben (eine positive Zahl genügt).',
+        );
+        hasError = true;
+      }
+      var nachricht = getField('nachricht');
+      if (!isValidNachricht(nachricht)) {
+        setFieldError('nachricht', 'Bitte kurz beschreiben, was Sie sich für Ihre Solaranlage wünschen.');
+        hasError = true;
+      }
 
       if (hasError) {
         showErrorFeedback('Bitte die markierten Pflichtfelder prüfen.');
-        var firstErr = contactForm.querySelector('.field--error input, .field--error select');
+        var firstErr = contactForm.querySelector(
+          '.field--error input, .field--error select, .field--error textarea',
+        );
         if (firstErr && typeof firstErr.focus === 'function') firstErr.focus();
         return;
       }
@@ -276,11 +307,11 @@
         nachname: nachname,
         email: email,
         telefon: telefon,
-        jahresverbrauch: getField('jahresverbrauch'),
+        jahresverbrauch: jahresverbrauch,
         wohnsituation: getField('wohnsituation'),
         montageort: getField('montageort'),
         finanzierung_interesse: getField('finanzierung_interesse'),
-        nachricht: getField('nachricht'),
+        nachricht: nachricht,
         product_line: productLine,
         landing_page: (window.location && window.location.pathname) || '/',
         marketing_consent: choice.marketing,
@@ -317,13 +348,13 @@
             showSuccessFeedback();
           } else {
             showErrorFeedback(
-              result.data.error || 'Die Anfrage konnte nicht gesendet werden. Bitte versuche es später erneut.',
+              result.data.error || 'Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.',
             );
           }
         })
         .catch(function () {
           showErrorFeedback(
-            'Die Anfrage konnte nicht gesendet werden. Bitte prüfe deine Internetverbindung und versuche es erneut.',
+            'Die Anfrage konnte nicht gesendet werden. Bitte prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
           );
         })
         .finally(function () {
