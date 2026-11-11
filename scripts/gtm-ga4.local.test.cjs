@@ -397,18 +397,19 @@ assert(
 );
 assert(
   'pv H1 is visitor-friendly without Klassische PV-Anlage',
-  /<h1[^>]*>Photovoltaik mit Speicher für dein Zuhause in Hannover<\/h1>/.test(
+  /<h1[^>]*>Ihre Photovoltaikanlage mit Speicher – passend zu Ihrem Zuhause\.<\/h1>/.test(
     readPublic('photovoltaik-speicher.html'),
   ) && !/Klassische PV-Anlage/.test(readPublic('photovoltaik-speicher.html')),
 );
 assert(
   'anker H1 is independent Anker SOLIX headline',
-  /<h1[^>]*>Anker SOLIX mit Speicher für dein Zuhause in Hannover<\/h1>/.test(
+  /<h1[^>]*>Ihre Anker-Solaranlage fürs Hausdach – mit Speicher und professioneller Montage\.<\/h1>/.test(
     readPublic('index.html'),
   ) &&
-    /<h1[^>]*>Anker SOLIX mit Speicher für dein Zuhause in Hannover<\/h1>/.test(
+    /<h1[^>]*>Ihre Anker-Solaranlage fürs Hausdach – mit Speicher und professioneller Montage\.<\/h1>/.test(
       readPublic('anker-dachanlage.html'),
-    ),
+    ) &&
+    !/Klassische PV-Anlage/.test(readPublic('index.html')),
 );
 assert(
   'both landings use Hannover hero photo',
@@ -581,6 +582,7 @@ function mountContactForm(window) {
   });
   form.appendChild(makeField('telefon', '015678444101'));
   form.appendChild(makeField('product_line', 'anker_dachanlage'));
+  form.appendChild(makeField('jahresverbrauch', '3500'));
   form.appendChild(makeField('nachricht', 'Hallo'));
   const btn = makeEl('button');
   btn.setAttribute('type', 'submit');
@@ -788,6 +790,16 @@ async function runFormTests() {
   submitForm(badPhone.form);
   assert('invalid phone does not call /api/contact', badPhone.window.__fetchCalls === 0);
 
+  const noUse = setupFormWindow({ analytics: true, marketing: false, withGtag: true });
+  noUse.form.querySelector('[name="jahresverbrauch"]').value = '';
+  submitForm(noUse.form);
+  assert('missing consumption does not call /api/contact', noUse.window.__fetchCalls === 0);
+
+  const noMsg = setupFormWindow({ analytics: true, marketing: false, withGtag: true });
+  noMsg.form.querySelector('[name="nachricht"]').value = '   ';
+  submitForm(noMsg.form);
+  assert('whitespace message does not call /api/contact', noMsg.window.__fetchCalls === 0);
+
   const badLine = setupFormWindow({ analytics: true, marketing: false, withGtag: true });
   badLine.form.querySelector('[name="product_line"]').value = 'anker_solix';
   submitForm(badLine.form);
@@ -801,7 +813,10 @@ async function runFormTests() {
   var posted = JSON.parse(intlOk.window.__lastFetchBody || '{}');
   assert(
     'POST body keeps phone and product_line',
-    posted.telefon === '+49 156 78444101' && posted.product_line === 'klassische_photovoltaik',
+    posted.telefon === '+49 156 78444101' &&
+      posted.product_line === 'klassische_photovoltaik' &&
+      posted.jahresverbrauch === '3500' &&
+      posted.nachricht === 'Hallo',
     JSON.stringify(posted),
   );
   intlOk.resolveFetch();

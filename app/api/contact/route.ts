@@ -58,6 +58,17 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;');
 }
 
+function isValidJahresverbrauch(raw?: string): boolean {
+  const s = (raw ?? '').trim().replace(/\s/g, '').replace(',', '.');
+  if (!s || !/^\d+(\.\d+)?$/.test(s)) return false;
+  const n = Number(s);
+  return Number.isFinite(n) && n >= 100 && n <= 200000;
+}
+
+function isValidNachricht(raw?: string): boolean {
+  return (raw ?? '').trim().length > 0;
+}
+
 function labelFor(value: string | undefined, labels: Record<string, string>): string {
   if (!value) return '–';
   return labels[value] ?? value;
@@ -177,6 +188,28 @@ export async function POST(request: Request) {
     );
   }
 
+  const jahresverbrauch = payload.jahresverbrauch?.trim() ?? '';
+  const nachricht = payload.nachricht?.trim() ?? '';
+
+  if (!jahresverbrauch) {
+    return NextResponse.json(
+      { error: 'Bitte Ihren Jahresstromverbrauch in kWh angeben.' },
+      { status: 400 },
+    );
+  }
+  if (!isValidJahresverbrauch(jahresverbrauch)) {
+    return NextResponse.json(
+      { error: 'Bitte einen plausiblen Jahresstromverbrauch in kWh angeben.' },
+      { status: 400 },
+    );
+  }
+  if (!isValidNachricht(nachricht)) {
+    return NextResponse.json(
+      { error: 'Bitte kurz beschreiben, was Sie sich für Ihre Solaranlage wünschen.' },
+      { status: 400 },
+    );
+  }
+
   const leadId = randomUUID();
   const createdAt = new Date().toISOString();
   const marketingConsent = payload.marketing_consent === true;
@@ -200,11 +233,11 @@ export async function POST(request: Request) {
       nachname,
       email,
       telefon,
-      jahresverbrauch: payload.jahresverbrauch?.trim(),
+      jahresverbrauch,
       wohnsituation: payload.wohnsituation,
       montageort: payload.montageort,
       finanzierung_interesse: payload.finanzierung_interesse,
-      nachricht: payload.nachricht?.trim(),
+      nachricht,
       product_line: productLine || undefined,
       landing_page: landingPage || undefined,
     }),
@@ -233,11 +266,11 @@ export async function POST(request: Request) {
       nachname,
       email,
       telefon,
-      jahresverbrauch: payload.jahresverbrauch?.trim(),
+      jahresverbrauch,
       wohnsituation: payload.wohnsituation,
       montageort: payload.montageort,
       finanzierung_interesse: payload.finanzierung_interesse,
-      nachricht: payload.nachricht?.trim(),
+      nachricht,
       product_line: productLine || undefined,
       landing_page: landingPage || undefined,
       marketing_consent: marketingConsent,
